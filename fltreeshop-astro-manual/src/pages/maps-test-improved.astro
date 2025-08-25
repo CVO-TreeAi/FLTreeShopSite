@@ -1,0 +1,249 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Improved Google Maps Test - TreeShop">
+  <div style="padding: 2rem; max-width: 800px; margin: 0 auto;">
+    <h1>Improved Google Maps API Test</h1>
+    
+    <div style="margin: 2rem 0;">
+      <h2>Enhanced Address Autocomplete:</h2>
+      <div style="position: relative;">
+        <input 
+          type="text" 
+          id="address-input" 
+          placeholder="Type a Florida address (e.g., 3634 Watermelon Rd, Brooksville, FL)"
+          style="width: 100%; padding: 1rem; border: 2px solid #2563eb; border-radius: 8px; margin: 1rem 0; font-size: 16px; box-sizing: border-box;"
+        >
+        <div id="address-info" style="margin-top: 1rem; padding: 1rem; background: #f0f8ff; border-radius: 8px; display: none;">
+          <!-- Address details will appear here -->
+        </div>
+      </div>
+    </div>
+    
+    <div style="margin: 2rem 0;">
+      <h3>Manual Address Test:</h3>
+      <button onclick="testSpecificAddress()" style="padding: 1rem 2rem; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer; margin-right: 1rem;">
+        Test: 3634 Watermelon Rd, Brooksville FL
+      </button>
+      <button onclick="testOrlandoAddress()" style="padding: 1rem 2rem; background: #16a34a; color: white; border: none; border-radius: 8px; cursor: pointer;">
+        Test: Orlando, FL
+      </button>
+      <div id="manual-test-result" style="padding: 1rem; background: #f0f8ff; border-radius: 8px; margin-top: 1rem; display: none;">
+        <!-- Manual test results -->
+      </div>
+    </div>
+    
+    <div style="margin: 2rem 0;">
+      <h3>API Diagnostics:</h3>
+      <button onclick="runDiagnostics()" style="padding: 1rem 2rem; background: #f59e0b; color: white; border: none; border-radius: 8px; cursor: pointer;">
+        Run Full Diagnostics
+      </button>
+      <div id="diagnostics-result" style="padding: 1rem; background: #fef3c7; border-radius: 8px; margin-top: 1rem; display: none;">
+        <!-- Diagnostics will appear here -->
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<!-- Load Google Maps with better error handling -->
+<script>
+  function initMapsImproved() {
+    console.log('Initializing improved Maps API...');
+    
+    const input = document.getElementById('address-input');
+    const infoDiv = document.getElementById('address-info');
+    
+    if (!window.google) {
+      console.error('Google Maps not loaded');
+      return;
+    }
+    
+    try {
+      // Create autocomplete with more permissive settings
+      const autocomplete = new google.maps.places.Autocomplete(input, {
+        types: ['address'],
+        componentRestrictions: { country: 'US' },
+        fields: [
+          'formatted_address', 
+          'geometry', 
+          'address_components', 
+          'place_id',
+          'name'
+        ]
+      });
+      
+      // Set bounds to Florida for better results
+      const floridaBounds = new google.maps.LatLngBounds(
+        new google.maps.LatLng(24.396308, -87.634896), // SW corner
+        new google.maps.LatLng(31.000968, -79.974306)  // NE corner
+      );
+      autocomplete.setBounds(floridaBounds);
+      
+      console.log('Autocomplete initialized successfully');
+      
+      // Listen for place selection
+      autocomplete.addListener('place_changed', function() {
+        const place = autocomplete.getPlace();
+        console.log('Place selected:', place);
+        
+        if (!place.geometry) {
+          infoDiv.style.display = 'block';
+          infoDiv.innerHTML = '<div style="color: red;">❌ No location data found. Try a more specific address.</div>';
+          return;
+        }
+        
+        // Show place details
+        infoDiv.style.display = 'block';
+        infoDiv.innerHTML = `
+          <div style="color: green; font-weight: bold;">✅ Address Found!</div>
+          <div><strong>Address:</strong> ${place.formatted_address}</div>
+          <div><strong>Coordinates:</strong> ${place.geometry.location.lat().toFixed(6)}, ${place.geometry.location.lng().toFixed(6)}</div>
+          <div><strong>Place ID:</strong> ${place.place_id}</div>
+          ${place.name ? `<div><strong>Name:</strong> ${place.name}</div>` : ''}
+        `;
+        
+        // Calculate distance to TreeShop base
+        calculateDistanceToBase(place.geometry.location);
+      });
+      
+      // Add manual typing detection
+      input.addEventListener('input', function() {
+        if (this.value.length > 3) {
+          console.log('User typing:', this.value);
+        }
+      });
+      
+    } catch (error) {
+      console.error('Autocomplete setup failed:', error);
+      infoDiv.style.display = 'block';
+      infoDiv.innerHTML = `<div style="color: red;">❌ Autocomplete setup failed: ${error.message}</div>`;
+    }
+  }
+  
+  function calculateDistanceToBase(destination) {
+    const baseLocation = new google.maps.LatLng(29.0216, -81.0770); // New Smyrna Beach
+    const service = new google.maps.DistanceMatrixService();
+    
+    service.getDistanceMatrix({
+      origins: [baseLocation],
+      destinations: [destination],
+      travelMode: google.maps.TravelMode.DRIVING,
+      unitSystem: google.maps.UnitSystem.IMPERIAL,
+      avoidHighways: false,
+      avoidTolls: false
+    }, function(response, status) {
+      const infoDiv = document.getElementById('address-info');
+      
+      if (status === 'OK') {
+        const result = response.rows[0].elements[0];
+        if (result.status === 'OK') {
+          const distance = result.distance.text;
+          const duration = result.duration.text;
+          const transportCost = Math.ceil(result.duration.value / 60 / 60 * 2) * 350; // Round trip cost
+          
+          infoDiv.innerHTML += `
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #ccc;">
+              <div><strong>Distance from TreeShop:</strong> ${distance}</div>
+              <div><strong>Drive Time:</strong> ${duration}</div>
+              <div><strong>Transport Cost:</strong> $${transportCost} (round trip)</div>
+            </div>
+          `;
+        }
+      }
+    });
+  }
+  
+  // Test specific addresses manually
+  window.testSpecificAddress = function() {
+    const geocoder = new google.maps.Geocoder();
+    const resultDiv = document.getElementById('manual-test-result');
+    
+    geocoder.geocode({ 
+      address: '3634 Watermelon Rd, Brooksville, FL' 
+    }, function(results, status) {
+      resultDiv.style.display = 'block';
+      
+      if (status === 'OK') {
+        const result = results[0];
+        resultDiv.innerHTML = `
+          <div style="color: green; font-weight: bold;">✅ Geocoding Working!</div>
+          <div><strong>Found:</strong> ${result.formatted_address}</div>
+          <div><strong>Coordinates:</strong> ${result.geometry.location.lat()}, ${result.geometry.location.lng()}</div>
+        `;
+      } else {
+        resultDiv.innerHTML = `<div style="color: red;">❌ Geocoding failed: ${status}</div>`;
+      }
+    });
+  };
+  
+  window.testOrlandoAddress = function() {
+    const geocoder = new google.maps.Geocoder();
+    const resultDiv = document.getElementById('manual-test-result');
+    
+    geocoder.geocode({ 
+      address: 'Orlando, FL' 
+    }, function(results, status) {
+      resultDiv.style.display = 'block';
+      
+      if (status === 'OK') {
+        const result = results[0];
+        resultDiv.innerHTML = `
+          <div style="color: green; font-weight: bold;">✅ Orlando Test Successful!</div>
+          <div><strong>Found:</strong> ${result.formatted_address}</div>
+          <div><strong>Coordinates:</strong> ${result.geometry.location.lat()}, ${result.geometry.location.lng()}</div>
+        `;
+        
+        // Test distance calculation
+        calculateDistanceToBase(result.geometry.location);
+      } else {
+        resultDiv.innerHTML = `<div style="color: red;">❌ Orlando test failed: ${status}</div>`;
+      }
+    });
+  };
+  
+  window.runDiagnostics = function() {
+    const diagnosticsDiv = document.getElementById('diagnostics-result');
+    diagnosticsDiv.style.display = 'block';
+    
+    const checks = {
+      'Google Maps Loaded': !!window.google,
+      'Maps API Available': !!window.google?.maps,
+      'Places Library': !!window.google?.maps?.places,
+      'Autocomplete Class': !!window.google?.maps?.places?.Autocomplete,
+      'Geocoder Available': !!window.google?.maps?.Geocoder,
+      'DistanceMatrix Available': !!window.google?.maps?.DistanceMatrixService,
+      'Geometry Library': !!window.google?.maps?.geometry
+    };
+    
+    let diagnosticsHTML = '<h4>API Availability Check:</h4>';
+    Object.entries(checks).forEach(([check, status]) => {
+      const icon = status ? '✅' : '❌';
+      const color = status ? 'green' : 'red';
+      diagnosticsHTML += `<div style="color: ${color};">${icon} ${check}</div>`;
+    });
+    
+    diagnosticsDiv.innerHTML = diagnosticsHTML;
+    
+    // Test a simple geocoding request
+    if (window.google?.maps?.Geocoder) {
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode({ address: 'Brooksville, FL' }, function(results, status) {
+        diagnosticsDiv.innerHTML += `
+          <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #ccc;">
+            <h4>Geocoding Test:</h4>
+            <div style="color: ${status === 'OK' ? 'green' : 'red'};">
+              ${status === 'OK' ? '✅' : '❌'} Geocoding Status: ${status}
+            </div>
+          </div>
+        `;
+      });
+    }
+  };
+</script>
+
+<!-- Load Google Maps API -->
+<script async defer 
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfpqXu-EQV5MWIFBodDFB1K3VZtz1kF5A&libraries=places,geometry&callback=initMapsImproved"
+        onerror="console.error('Failed to load Google Maps script')">
+</script>

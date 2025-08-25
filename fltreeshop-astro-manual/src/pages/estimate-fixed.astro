@@ -1,0 +1,389 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Get Your Free Estimate - The Tree Shop">
+  <main style="background: linear-gradient(135deg, #1e3a8a, #1e40af); min-height: 100vh; padding: 2rem 0;">
+    <div class="treeshop-container">
+      
+      <!-- Header -->
+      <div class="text-center mb-12">
+        <h1 class="treeshop-display-lg text-white mb-4">
+          Get Your <span style="color: #fbbf24;">Free Estimate</span>
+        </h1>
+        <p class="treeshop-h5" style="color: #bfdbfe;">
+          Professional pricing for forestry mulching and land clearing services in Florida
+        </p>
+      </div>
+
+      <!-- Simple Contact Form -->
+      <div class="max-w-2xl mx-auto">
+        <div style="background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 12px 24px rgba(0,0,0,0.1);">
+          <div class="text-center mb-6">
+            <h2 class="treeshop-h2 treeshop-text-blue mb-3">Contact Information</h2>
+            <p class="treeshop-body treeshop-text-gray-600">
+              We'll use your information to provide accurate pricing
+            </p>
+          </div>
+          
+          <form id="contact-form" class="space-y-4">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div>
+                <label class="block treeshop-body-sm font-semibold treeshop-text-gray-700 mb-2">
+                  First Name *
+                </label>
+                <input
+                  type="text"
+                  id="first-name"
+                  required
+                  style="width: 100%; border: 2px solid #d1d5db; border-radius: 8px; padding: 0.75rem; font-size: 1rem;"
+                  placeholder="John"
+                />
+              </div>
+              <div>
+                <label class="block treeshop-body-sm font-semibold treeshop-text-gray-700 mb-2">
+                  Last Name *
+                </label>
+                <input
+                  type="text"
+                  id="last-name"
+                  required
+                  style="width: 100%; border: 2px solid #d1d5db; border-radius: 8px; padding: 0.75rem; font-size: 1rem;"
+                  placeholder="Smith"
+                />
+              </div>
+            </div>
+            
+            <div>
+              <label class="block treeshop-body-sm font-semibold treeshop-text-gray-700 mb-2">
+                Phone Number *
+              </label>
+              <input
+                type="tel"
+                id="phone"
+                required
+                style="width: 100%; border: 2px solid #d1d5db; border-radius: 8px; padding: 0.75rem; font-size: 1rem;"
+                placeholder="(555) 123-4567"
+              />
+            </div>
+            
+            <div>
+              <label class="block treeshop-body-sm font-semibold treeshop-text-gray-700 mb-2">
+                Email Address *
+              </label>
+              <input
+                type="email"
+                id="email"
+                required
+                style="width: 100%; border: 2px solid #d1d5db; border-radius: 8px; padding: 0.75rem; font-size: 1rem;"
+                placeholder="john@email.com"
+              />
+            </div>
+            
+            <div>
+              <label class="block treeshop-body-sm font-semibold treeshop-text-gray-700 mb-2">
+                Project Address *
+              </label>
+              <input
+                type="text"
+                id="project-address"
+                required
+                style="width: 100%; border: 2px solid #d1d5db; border-radius: 8px; padding: 0.75rem; font-size: 1rem; position: relative; z-index: 1000;"
+                placeholder="Start typing your Florida address..."
+              />
+              <div id="address-suggestions" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #d1d5db; border-radius: 0 0 8px 8px; max-height: 200px; overflow-y: auto; z-index: 1001; display: none;">
+                <!-- Suggestions will appear here -->
+              </div>
+              <p class="treeshop-caption treeshop-text-gray-500 mt-1">Full address of the property to be cleared</p>
+            </div>
+            
+            <div>
+              <label class="block treeshop-body-sm font-semibold treeshop-text-gray-700 mb-2">
+                Project Size (Acres) *
+              </label>
+              <input
+                type="number"
+                id="acres"
+                min="0.25"
+                step="0.25"
+                required
+                style="width: 100%; border: 2px solid #d1d5db; border-radius: 8px; padding: 0.75rem; font-size: 1rem;"
+                placeholder="e.g., 3.5"
+              />
+            </div>
+            
+            <div>
+              <label class="block treeshop-body-sm font-semibold treeshop-text-gray-700 mb-2">
+                Service Type *
+              </label>
+              <select 
+                id="service-type"
+                required
+                style="width: 100%; border: 2px solid #d1d5db; border-radius: 8px; padding: 0.75rem; font-size: 1rem;"
+              >
+                <option value="">Select a service...</option>
+                <option value="forestry">Forestry Mulching</option>
+                <option value="land-clearing">Land Clearing</option>
+              </select>
+            </div>
+            
+            <div id="package-selection" style="display: none;">
+              <label class="block treeshop-body-sm font-semibold treeshop-text-gray-700 mb-2">
+                Package Type *
+              </label>
+              <select 
+                id="package-type"
+                style="width: 100%; border: 2px solid #d1d5db; border-radius: 8px; padding: 0.75rem; font-size: 1rem;"
+              >
+                <!-- Options will be populated by JavaScript -->
+              </select>
+            </div>
+            
+            <div id="estimate-result" style="display: none; background: #dcfce7; border: 1px solid #16a34a; border-radius: 8px; padding: 1rem; margin-top: 1rem;">
+              <!-- Estimate will appear here -->
+            </div>
+            
+            <button
+              type="submit"
+              class="treeshop-btn treeshop-btn-primary treeshop-btn-lg"
+              style="width: 100%; margin-top: 1.5rem;"
+            >
+              Get My Free Estimate
+            </button>
+          </form>
+          
+          <div style="background: #eff6ff; border: 1px solid #3b82f6; border-radius: 8px; padding: 1rem; margin-top: 1.5rem;">
+            <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+              <div style="color: #2563eb; margin-top: 0.25rem;">🔒</div>
+              <div>
+                <h3 style="font-weight: 600; color: #2563eb; margin-bottom: 0.5rem;">Your Information is Secure</h3>
+                <ul style="font-size: 0.875rem; color: #4b5563; margin: 0; padding-left: 1rem;">
+                  <li>Used only for providing your estimate and project communication</li>
+                  <li>We'll validate your proposal and follow up within 4 hours</li>
+                  <li>No spam or unwanted calls - only project-related contact</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</Layout>
+
+<!-- Simplified Google Maps Loading -->
+<script>
+  // Load Google Maps API
+  window.initTreeShopEstimate = function() {
+    console.log('TreeShop Estimate System Loading...');
+    
+    // Package pricing
+    const PACKAGES = {
+      forestry: {
+        'small': { label: 'Small Package (4" DBH & Under)', rate: 2125 },
+        'medium': { label: 'Medium Package (6" DBH & Under)', rate: 2500 },
+        'large': { label: 'Large Package (8" DBH & Under)', rate: 3375 },
+        'xlarge': { label: 'X-Large Package (10" DBH & Under)', rate: 4250 }
+      },
+      'land-clearing': {
+        'light': { label: 'Light Clearing', rate: 3000 },
+        'average': { label: 'Average Clearing', rate: 4500 },
+        'thick': { label: 'Thick Clearing', rate: 6000 },
+        'heavy': { label: 'Heavy Clearing', rate: 8500 },
+        'wet': { label: 'Wet Conditions', rate: 10000 }
+      }
+    };
+    
+    // Set up form handling
+    const form = document.getElementById('contact-form');
+    const serviceSelect = document.getElementById('service-type');
+    const packageDiv = document.getElementById('package-selection');
+    const packageSelect = document.getElementById('package-type');
+    const acresInput = document.getElementById('acres');
+    const addressInput = document.getElementById('project-address');
+    
+    // Service type change handler
+    serviceSelect.addEventListener('change', function() {
+      const serviceType = this.value;
+      
+      if (serviceType) {
+        packageDiv.style.display = 'block';
+        packageSelect.innerHTML = '<option value="">Select package...</option>';
+        
+        Object.entries(PACKAGES[serviceType]).forEach(([key, pkg]) => {
+          const option = document.createElement('option');
+          option.value = key;
+          option.textContent = `${pkg.label} - $${pkg.rate.toLocaleString()}/acre`;
+          packageSelect.appendChild(option);
+        });
+      } else {
+        packageDiv.style.display = 'none';
+      }
+      
+      calculateEstimate();
+    });
+    
+    // Calculate estimate
+    function calculateEstimate() {
+      const serviceType = serviceSelect.value;
+      const packageType = packageSelect.value;
+      const acres = parseFloat(acresInput.value) || 0;
+      
+      if (serviceType && packageType && acres > 0) {
+        const packageInfo = PACKAGES[serviceType][packageType];
+        const baseTotal = packageInfo.rate * acres;
+        const transportCost = Math.max(350, acres * 100); // Minimum $350
+        const cushion = (baseTotal + transportCost) * 0.10;
+        const finalTotal = baseTotal + transportCost + cushion;
+        
+        const resultDiv = document.getElementById('estimate-result');
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = `
+          <div class="text-center">
+            <div style="color: #16a34a; font-weight: bold; margin-bottom: 0.5rem;">✅ Estimate Calculated</div>
+            <div style="font-size: 2rem; font-weight: bold; color: #16a34a; margin: 1rem 0;">
+              $${Math.round(finalTotal).toLocaleString()}
+            </div>
+            <div style="font-size: 0.875rem; color: #4b5563;">
+              ${acres} acres • ${packageInfo.label}
+            </div>
+            <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.5rem;">
+              Base: $${Math.round(baseTotal).toLocaleString()} + Transport: $${Math.round(transportCost).toLocaleString()} + Cushion: $${Math.round(cushion).toLocaleString()}
+            </div>
+          </div>
+        `;
+      } else {
+        document.getElementById('estimate-result').style.display = 'none';
+      }
+    }
+    
+    // Add event listeners for live calculation
+    packageSelect.addEventListener('change', calculateEstimate);
+    acresInput.addEventListener('input', calculateEstimate);
+    
+    // Simple address autocomplete (fallback if Google Places has issues)
+    let addressTimeout;
+    addressInput.addEventListener('input', function() {
+      const query = this.value;
+      
+      clearTimeout(addressTimeout);
+      addressTimeout = setTimeout(() => {
+        if (query.length > 3) {
+          // If Google Places works, use it
+          if (window.google && window.google.maps && window.google.maps.places) {
+            setupGooglePlaces();
+          } else {
+            // Fallback: simple Florida city validation
+            validateFloridaAddress(query);
+          }
+        }
+      }, 300);
+    });
+    
+    function setupGooglePlaces() {
+      try {
+        const autocomplete = new google.maps.places.Autocomplete(addressInput, {
+          types: ['address'],
+          componentRestrictions: { country: 'US' },
+          fields: ['formatted_address', 'geometry']
+        });
+        
+        autocomplete.addListener('place_changed', function() {
+          const place = autocomplete.getPlace();
+          if (place.geometry) {
+            console.log('Address selected:', place.formatted_address);
+            // Calculate actual distance here if needed
+          }
+        });
+        
+        console.log('Google Places autocomplete active');
+      } catch (error) {
+        console.error('Google Places setup failed:', error);
+      }
+    }
+    
+    function validateFloridaAddress(address) {
+      // Simple Florida validation as fallback
+      const floridaKeywords = ['FL', 'Florida', 'Brooksville', 'Orlando', 'Tampa', 'Gainesville', 'Ocala'];
+      const hasFloridaKeyword = floridaKeywords.some(keyword => 
+        address.toLowerCase().includes(keyword.toLowerCase())
+      );
+      
+      if (hasFloridaKeyword) {
+        console.log('Florida address detected:', address);
+      }
+    }
+    
+    // Form submission
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = {
+        firstName: document.getElementById('first-name').value,
+        lastName: document.getElementById('last-name').value,
+        phone: document.getElementById('phone').value,
+        email: document.getElementById('email').value,
+        address: document.getElementById('project-address').value,
+        acres: parseFloat(document.getElementById('acres').value),
+        serviceType: document.getElementById('service-type').value,
+        packageType: document.getElementById('package-type').value
+      };
+      
+      console.log('Form submitted:', formData);
+      
+      // Show success message
+      const resultDiv = document.getElementById('estimate-result');
+      if (resultDiv.style.display !== 'none') {
+        alert(`Thank you ${formData.firstName}! Your estimate has been submitted. We'll contact you within 4 hours to validate and confirm your proposal.`);
+      } else {
+        alert('Please fill out all required fields and get your estimate first.');
+      }
+    });
+  };
+</script>
+
+<!-- Load Google Maps with callback -->
+<script async defer 
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfpqXu-EQV5MWIFBodDFB1K3VZtz1kF5A&libraries=places&callback=initTreeShopEstimate">
+</script>
+
+<style>
+  .space-y-4 > * + * { margin-top: 1rem; }
+  .max-w-2xl { max-width: 42rem; }
+  .mx-auto { margin-left: auto; margin-right: auto; }
+  .text-center { text-align: center; }
+  .mb-2 { margin-bottom: 0.5rem; }
+  .mb-3 { margin-bottom: 0.75rem; }
+  .mb-4 { margin-bottom: 1rem; }
+  .mb-6 { margin-bottom: 1.5rem; }
+  .mb-12 { margin-bottom: 3rem; }
+  
+  input:focus, select:focus {
+    border-color: #2563eb !important;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+  
+  /* Ensure autocomplete dropdown appears above other elements */
+  .pac-container {
+    z-index: 10000 !important;
+    border-radius: 8px !important;
+    border: 1px solid #d1d5db !important;
+    font-family: inherit !important;
+  }
+  
+  .pac-item {
+    padding: 12px !important;
+    border-bottom: 1px solid #f3f4f6 !important;
+    font-size: 14px !important;
+  }
+  
+  .pac-item:hover {
+    background-color: #eff6ff !important;
+  }
+  
+  .pac-item-selected {
+    background-color: #dbeafe !important;
+  }
+</style>

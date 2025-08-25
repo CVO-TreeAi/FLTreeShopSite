@@ -1,0 +1,114 @@
+input:focus.error,
+select:focus.error,
+.form-control:focus.error,
+.form-select:focus.error,
+
+input.error,
+select.error,
+.form-control.error,
+.form-select.error,
+
+.error {
+
+  border: 1px solid #ff0000 !important;
+  /* box-shadow: 6px 4px 8px #ff0000; */
+
+}
+
+
+
+.errortext {
+
+  color: #ff0000;
+
+  font-weight: normal;
+
+  font-style: italic;
+
+}
+
+label.error,
+
+div.error {
+
+  display: none !important;
+
+}
+
+
+.Human #validsumcaptcha,
+label[for=hiddenRecaptcha],
+label[for=hiddenRecaptcha1],
+label[for=hiddenRecaptcha2],
+label[for=hiddenRecaptcha3],
+label[for=hiddenRecaptcha4] {
+
+  display: block !important;
+
+  color: #ff0000 !important;
+
+  border: none;
+  box-shadow: none;
+  font-size: 13px !important;
+
+  line-height: 1.5 !important;
+
+  background: none;
+
+}
+
+
+
+div[for=hiddenRecaptcha],
+div[for=hiddenRecaptcha1],
+div[for=hiddenRecaptcha2],
+div[for=hiddenRecaptcha3],
+div[for=hiddenRecaptcha4] {
+
+  display: block !important;
+
+  text-align: left;
+
+  background: none;
+
+  color: #ff0000 !important;
+
+  border: none;
+  box-shadow: none;
+  font-size: 13px !important;
+
+  line-height: 1.5 !important;
+
+}
+.Human .text-box div.error,
+.Human .text-box label.error {
+  display: block !important;
+  font-size: 14px;
+  color: #ff0000;
+  width: 100%;
+  line-height: 1.5;
+  border: 0 !important;
+}
+.Human label.error,
+
+.SecurityCode label.error {
+
+  border: 0 !important;
+  box-shadow: none !important;
+  display: block !important;
+  font-size: 14px;
+  font-weight: 400;
+  color: #ff0000;
+}
+.Human label.error,
+.SecurityCode label.error {
+  border: 0 !important;
+}
+
+/* .Human label.error,
+.SecurityCode label.error {
+  display: block !important;
+  font-size: 14px;
+  font-weight: 400;
+  color: #ff0000;
+} */

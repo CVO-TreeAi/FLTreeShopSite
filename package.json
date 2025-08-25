@@ -1,0 +1,19 @@
+{
+  "name": "fltreeshop-site",
+  "version": "1.0.0",
+  "description": "The Tree Shop - Professional Forestry Mulching & Land Clearing Services in Florida",
+  "scripts": {
+    "dev": "python3 -m http.server 8080",
+    "build": "echo 'Static site - no build required'",
+    "start": "python3 -m http.server 8080"
+  },
+  "keywords": [
+    "forestry mulching",
+    "land clearing",
+    "tree services",
+    "florida",
+    "tree shop"
+  ],
+  "author": "The Tree Shop",
+  "license": "MIT"
+}

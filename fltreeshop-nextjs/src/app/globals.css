@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+:root {
+  --tree-shop-blue: #2563eb;
+  --tree-shop-dark-blue: #1d4ed8;
+  --tree-shop-light-blue: #3b82f6;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Header Styling */
+.TopHeader {
+  background: linear-gradient(135deg, var(--tree-shop-blue), var(--tree-shop-dark-blue));
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--tree-shop-blue);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--tree-shop-dark-blue);
+}
+
+/* Animation classes */
+.fade-in {
+  animation: fadeIn 0.6s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-up {
+  animation: slideUp 0.8s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(60px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Button hover effects */
+.btn-hover-scale {
+  transition: transform 0.2s ease;
+}
+
+.btn-hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* Custom blue theme colors */
+.text-tree-blue { color: var(--tree-shop-blue); }
+.bg-tree-blue { background-color: var(--tree-shop-blue); }
+.border-tree-blue { border-color: var(--tree-shop-blue); }
+
+.text-tree-dark-blue { color: var(--tree-shop-dark-blue); }
+.bg-tree-dark-blue { background-color: var(--tree-shop-dark-blue); }
+.border-tree-dark-blue { border-color: var(--tree-shop-dark-blue); }
