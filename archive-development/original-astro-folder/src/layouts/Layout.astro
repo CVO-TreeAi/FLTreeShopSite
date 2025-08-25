@@ -1,0 +1,138 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Professional forestry mulching and land clearing services in Florida" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{title}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:url" content="https://www.fltreeshop.com/" />
+    <meta name="twitter:site" content="https://www.fltreeshop.com/" />
+    <meta name="twitter:card" content="summary" />
+    <meta property="og:type" content="website" />
+    <link rel="canonical" href="/" />
+    
+    <!-- Original CSS (for smooth animations and effects) -->
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/swiper-bundle.min.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/magnific-popup.min.css" rel="stylesheet" type="text/css">
+    <link href="/assets/css/main.min.css" rel="stylesheet" type="text/css">
+    
+    <!-- TreeShop Design System CSS -->
+    <link href="/TreeShopDesignSystem/treeshop-design-system.css" rel="stylesheet" type="text/css">
+    
+    <link rel="shortcut icon" href="/images/favicon.ico">
+    
+    <!-- JavaScript Libraries (for smooth interactions) -->
+    <script is:inline src="/assets/js/swiper-bundle.min.js"></script>
+    <script is:inline src="/assets/js/jquery-3.6.4.min.js"></script>
+    <script is:inline src="/assets/js/bootstrap.min.js"></script>
+    <script is:inline src="/assets/js/jquery.magnific-popup.min.js"></script>
+    <script is:inline src="/assets/js/common.js"></script>
+    <script is:inline src="/assets/js/jquery-blog-list.js"></script>
+    
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TCMZ2CL');</script>
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SGQG1JY4BJ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-SGQG1JY4BJ');
+    </script>
+  </head>
+  
+  <body class="ie8 home-body page-1 cat-0 tax-1" id="top">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TCMZ2CL"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    
+    <slot />
+    
+    <!-- Scroll to top functionality -->
+    <script type="text/javascript">
+      jQuery('.scroll-top-arrow').click(function () {
+        jQuery('body,html').animate({
+          scrollTop: 0
+        }, 400);
+        return false;
+      });
+    </script>
+    
+    <!-- Swiper initialization -->
+    <script>
+      var swiper = new Swiper(".testimonial", {
+        effect: 'fade',
+        slidesPerView: 1,
+        spaceBetween: 0,
+        autoHeight: true,
+        lazy: true,
+        loop: true,
+        speed: 2000,
+        autoplay: {
+          delay: 3500,
+          disableOnInteraction: false
+        },
+        navigation: {
+          nextEl: ".swiper-button-next1",
+          prevEl: ".swiper-button-prev1",
+        },
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+        },
+      });
+    </script>
+    
+    <!-- Sticky header -->
+    <script type="text/javascript">
+      jQuery(document).ready(function () {
+        jQuery(".sticky-menu").hide();
+        jQuery(window).scroll(function () {
+          var sd = jQuery(window).scrollTop();
+          if (sd > 95)
+            jQuery(".sticky-menu").fadeIn(500);
+          else
+            jQuery(".sticky-menu").fadeOut(500);
+        });
+      });
+    </script>
+    
+    <!-- Mobile menu toggle -->
+    <script type="text/javascript">
+      $('.menu-link').on('click', function () {
+        $('body').toggleClass('open-side-menu');
+      });
+    </script>
+    
+    <!-- Magnific Popup -->
+    <script>
+      jQuery(document).ready(function () {
+        jQuery('.popup-youtube, .popup-vimeo, .popup-gmaps').magnificPopup({
+          disableOn: 700,
+          type: 'iframe',
+          mainClass: 'mfp-fade',
+          removalDelay: 160,
+          preloader: false,
+          fixedContentPos: false
+        });
+      });
+    </script>
+  </body>
+</html>

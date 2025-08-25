@@ -1,0 +1,186 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Google Maps API Test - TreeShop">
+  <div style="padding: 2rem; max-width: 800px; margin: 0 auto;">
+    <h1>Google Maps API Test</h1>
+    
+    <div style="margin: 2rem 0;">
+      <h2>API Status:</h2>
+      <div id="api-status" style="padding: 1rem; background: #f0f0f0; border-radius: 8px;">
+        Loading...
+      </div>
+    </div>
+    
+    <div style="margin: 2rem 0;">
+      <h3>Address Autocomplete Test:</h3>
+      <input 
+        type="text" 
+        id="address-test" 
+        placeholder="Start typing a Florida address..."
+        style="width: 100%; padding: 1rem; border: 2px solid #ccc; border-radius: 8px; margin: 1rem 0;"
+      >
+      <div id="address-result" style="padding: 1rem; background: #e8f5e8; border-radius: 8px; display: none;">
+        <!-- Results will appear here -->
+      </div>
+    </div>
+    
+    <div style="margin: 2rem 0;">
+      <h3>Distance Test:</h3>
+      <button onclick="testDistance()" style="padding: 1rem 2rem; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer;">
+        Test Distance to Orlando
+      </button>
+      <div id="distance-result" style="padding: 1rem; background: #e8f5e8; border-radius: 8px; margin-top: 1rem; display: none;">
+        <!-- Distance results will appear here -->
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<!-- Test Google Maps API -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfpqXu-EQV5MWIFBodDFB1K3VZtz1kF5A&libraries=places,geometry&callback=initMapsTest" async defer></script>
+
+<script is:inline>
+  window.initMapsTest = function() {
+    const statusDiv = document.getElementById('api-status');
+    const addressInput = document.getElementById('address-test');
+    const addressResult = document.getElementById('address-result');
+    
+    // Check if Google Maps loaded successfully
+    if (window.google && window.google.maps) {
+      statusDiv.innerHTML = `
+        <div style="color: green; font-weight: bold;">✅ Google Maps API Loaded Successfully!</div>
+        <div>API Key: AIzaSyCfpqXu-EQV5MWIFBodDFB1K3VZtz1kF5A</div>
+        <div>Libraries: places, geometry</div>
+        <div>Ready for address autocomplete and distance calculation</div>
+      `;
+      
+      // Set up autocomplete with enhanced error handling
+      try {
+        console.log('Checking Places API...', {
+          google: !!window.google,
+          maps: !!window.google?.maps,
+          places: !!window.google?.maps?.places,
+          Autocomplete: !!window.google?.maps?.places?.Autocomplete
+        });
+        
+        if (!google.maps.places) {
+          throw new Error('Places library not loaded - check if Places API is enabled');
+        }
+        
+        if (!google.maps.places.Autocomplete) {
+          throw new Error('Autocomplete class not available');
+        }
+        
+        const autocomplete = new google.maps.places.Autocomplete(addressInput, {
+          componentRestrictions: { country: 'us' },
+          fields: ['formatted_address', 'geometry', 'address_components'],
+          types: ['address'],
+          bounds: new google.maps.LatLngBounds(
+            new google.maps.LatLng(24.396308, -87.634896), // SW Florida
+            new google.maps.LatLng(31.000968, -79.974306)  // NE Florida
+          ),
+          strictBounds: false
+        });
+        
+        console.log('Autocomplete created successfully:', autocomplete);
+      
+        autocomplete.addListener('place_changed', function() {
+          const place = autocomplete.getPlace();
+          
+          if (place.geometry) {
+            addressResult.style.display = 'block';
+            addressResult.innerHTML = `
+              <div><strong>Selected Address:</strong> ${place.formatted_address}</div>
+              <div><strong>Coordinates:</strong> ${place.geometry.location.lat()}, ${place.geometry.location.lng()}</div>
+              <div style="color: green;">✅ Address validation working!</div>
+            `;
+          }
+        });
+        
+      } catch (error) {
+        statusDiv.innerHTML += `
+          <div style="color: red; margin-top: 1rem;">
+            <strong>❌ Places API Error:</strong> ${error.message}<br>
+            <strong>Solution:</strong> Enable "Places API" in Google Cloud Console
+          </div>
+        `;
+      }
+      
+    } else {
+      statusDiv.innerHTML = `
+        <div style="color: red; font-weight: bold;">❌ Google Maps API Failed to Load</div>
+        <div>Possible issues:</div>
+        <ul>
+          <li>API key not valid</li>
+          <li>APIs not enabled in Google Cloud Console</li>
+          <li>Domain restrictions</li>
+          <li>Billing not set up</li>
+        </ul>
+      `;
+    }
+  };
+  
+  // Test distance calculation
+  window.testDistance = function() {
+    const distanceResult = document.getElementById('distance-result');
+    
+    if (!window.google || !window.google.maps) {
+      distanceResult.style.display = 'block';
+      distanceResult.innerHTML = '<div style="color: red;">❌ Google Maps not loaded</div>';
+      return;
+    }
+    
+    const service = new google.maps.DistanceMatrixService();
+    const treeShopBase = new google.maps.LatLng(29.0216, -81.0770); // New Smyrna Beach
+    const orlando = new google.maps.LatLng(28.5383, -81.3792); // Orlando
+    
+    service.getDistanceMatrix({
+      origins: [treeShopBase],
+      destinations: [orlando],
+      travelMode: google.maps.TravelMode.DRIVING,
+      unitSystem: google.maps.UnitSystem.IMPERIAL
+    }, function(response, status) {
+      distanceResult.style.display = 'block';
+      
+      if (status === google.maps.DistanceMatrixStatus.OK) {
+        const result = response.rows[0].elements[0];
+        
+        if (result.status === 'OK') {
+          const distance = result.distance.text;
+          const duration = result.duration.text;
+          const durationMinutes = Math.ceil(result.duration.value / 60);
+          const transportCost = Math.ceil(durationMinutes * 2 / 60) * 350; // Round trip cost
+          
+          distanceResult.innerHTML = `
+            <div style="color: green; font-weight: bold;">✅ Distance API Working!</div>
+            <div><strong>Distance:</strong> ${distance}</div>
+            <div><strong>Drive Time:</strong> ${duration}</div>
+            <div><strong>Transport Cost:</strong> $${transportCost} (round trip)</div>
+          `;
+        } else {
+          distanceResult.innerHTML = `<div style="color: red;">❌ Distance calculation failed: ${result.status}</div>`;
+        }
+      } else {
+        distanceResult.innerHTML = `<div style="color: red;">❌ Distance Matrix API error: ${status}</div>`;
+      }
+    });
+  };
+  
+  // Handle API load failure
+  window.gm_authFailure = function() {
+    const statusDiv = document.getElementById('api-status');
+    statusDiv.innerHTML = `
+      <div style="color: red; font-weight: bold;">❌ Google Maps Authentication Failed</div>
+      <div>Check these settings in Google Cloud Console:</div>
+      <ul>
+        <li>Enable Maps JavaScript API</li>
+        <li>Enable Places API</li>
+        <li>Enable Distance Matrix API</li>
+        <li>Add localhost:4321 to authorized domains</li>
+        <li>Check billing is enabled</li>
+      </ul>
+    `;
+  };
+</script>

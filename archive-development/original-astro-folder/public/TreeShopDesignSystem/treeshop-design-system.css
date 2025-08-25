@@ -1,0 +1,383 @@
+/* 
+ * TreeShopBlueWhite Design System
+ * Professional forestry services brand identity
+ */
+
+/* ===== CSS CUSTOM PROPERTIES ===== */
+:root {
+  /* Primary Brand Colors */
+  --treeshop-blue: #2563eb;
+  --treeshop-blue-dark: #1d4ed8;
+  --treeshop-blue-light: #3b82f6;
+  --treeshop-blue-50: #eff6ff;
+  
+  /* Neutral Colors */
+  --treeshop-white: #ffffff;
+  --treeshop-gray-50: #f9fafb;
+  --treeshop-gray-100: #f3f4f6;
+  --treeshop-gray-200: #e5e7eb;
+  --treeshop-gray-300: #d1d5db;
+  --treeshop-gray-400: #9ca3af;
+  --treeshop-gray-500: #6b7280;
+  --treeshop-gray-600: #4b5563;
+  --treeshop-gray-700: #374151;
+  --treeshop-gray-800: #1f2937;
+  --treeshop-gray-900: #111827;
+  
+  /* Accent Colors */
+  --treeshop-green: #10b981;
+  --treeshop-orange: #f59e0b;
+  --treeshop-red: #ef4444;
+  
+  /* Typography Scale */
+  --text-display-2xl: 4.5rem;    /* 72px */
+  --text-display-xl: 3.75rem;    /* 60px */
+  --text-display-lg: 3rem;       /* 48px */
+  --text-4xl: 2.25rem;           /* 36px */
+  --text-3xl: 1.875rem;          /* 30px */
+  --text-2xl: 1.5rem;            /* 24px */
+  --text-xl: 1.25rem;            /* 20px */
+  --text-lg: 1.125rem;           /* 18px */
+  --text-base: 1rem;             /* 16px */
+  --text-sm: 0.875rem;           /* 14px */
+  --text-xs: 0.75rem;            /* 12px */
+  
+  /* Spacing Scale */
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  --space-20: 5rem;     /* 80px */
+  --space-24: 6rem;     /* 96px */
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.15);
+  
+  /* Transitions */
+  --transition-fast: all 0.15s ease;
+  --transition: all 0.2s ease;
+  --transition-slow: all 0.3s ease;
+  
+  /* Border Radius */
+  --radius-sm: 0.25rem;   /* 4px */
+  --radius: 0.5rem;       /* 8px */
+  --radius-md: 0.75rem;   /* 12px */
+  --radius-lg: 1rem;      /* 16px */
+  --radius-xl: 1.5rem;    /* 24px */
+  --radius-full: 9999px;
+}
+
+/* ===== BASE STYLES ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.6;
+  color: var(--treeshop-gray-800);
+  background: var(--treeshop-white);
+}
+
+/* ===== TYPOGRAPHY ===== */
+.treeshop-display-2xl { font-size: var(--text-display-2xl); font-weight: 800; line-height: 1.1; }
+.treeshop-display-xl { font-size: var(--text-display-xl); font-weight: 700; line-height: 1.1; }
+.treeshop-display-lg { font-size: var(--text-display-lg); font-weight: 700; line-height: 1.2; }
+
+.treeshop-h1 { font-size: var(--text-4xl); font-weight: 700; line-height: 1.2; }
+.treeshop-h2 { font-size: var(--text-3xl); font-weight: 600; line-height: 1.3; }
+.treeshop-h3 { font-size: var(--text-2xl); font-weight: 600; line-height: 1.3; }
+.treeshop-h4 { font-size: var(--text-xl); font-weight: 600; line-height: 1.4; }
+.treeshop-h5 { font-size: var(--text-lg); font-weight: 600; line-height: 1.4; }
+
+.treeshop-body { font-size: var(--text-base); line-height: 1.6; }
+.treeshop-body-sm { font-size: var(--text-sm); line-height: 1.5; }
+.treeshop-caption { font-size: var(--text-xs); line-height: 1.4; }
+
+/* ===== COLOR UTILITIES ===== */
+.treeshop-text-blue { color: var(--treeshop-blue); }
+.treeshop-text-blue-dark { color: var(--treeshop-blue-dark); }
+.treeshop-text-white { color: var(--treeshop-white); }
+.treeshop-text-gray-600 { color: var(--treeshop-gray-600); }
+.treeshop-text-gray-800 { color: var(--treeshop-gray-800); }
+.treeshop-text-gray-900 { color: var(--treeshop-gray-900); }
+
+.treeshop-bg-blue { background: var(--treeshop-blue); }
+.treeshop-bg-blue-dark { background: var(--treeshop-blue-dark); }
+.treeshop-bg-white { background: var(--treeshop-white); }
+.treeshop-bg-gray-50 { background: var(--treeshop-gray-50); }
+.treeshop-bg-gray-100 { background: var(--treeshop-gray-100); }
+
+/* ===== GRADIENTS ===== */
+.treeshop-gradient-primary {
+  background: linear-gradient(135deg, var(--treeshop-blue), var(--treeshop-blue-dark));
+}
+
+.treeshop-gradient-light {
+  background: linear-gradient(135deg, var(--treeshop-blue-50), var(--treeshop-white));
+}
+
+.treeshop-gradient-overlay {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4));
+}
+
+/* ===== BUTTONS ===== */
+.treeshop-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--text-base);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.treeshop-btn-primary {
+  background: var(--treeshop-blue);
+  color: var(--treeshop-white);
+  box-shadow: var(--shadow-sm);
+}
+
+.treeshop-btn-primary:hover {
+  background: var(--treeshop-blue-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.treeshop-btn-secondary {
+  background: transparent;
+  color: var(--treeshop-blue);
+  border: 2px solid var(--treeshop-blue);
+}
+
+.treeshop-btn-secondary:hover {
+  background: var(--treeshop-blue);
+  color: var(--treeshop-white);
+  transform: translateY(-1px);
+}
+
+.treeshop-btn-lg {
+  padding: var(--space-4) var(--space-8);
+  font-size: var(--text-lg);
+}
+
+.treeshop-btn-sm {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+}
+
+/* ===== CARDS ===== */
+.treeshop-card {
+  background: var(--treeshop-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  padding: var(--space-6);
+  border: 1px solid var(--treeshop-gray-200);
+  transition: var(--transition-slow);
+}
+
+.treeshop-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--treeshop-blue-light);
+}
+
+.treeshop-card-service {
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+  cursor: pointer;
+}
+
+.treeshop-card-service:hover .treeshop-card-overlay {
+  background: rgba(37, 99, 235, 0.8);
+}
+
+.treeshop-card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+/* ===== NAVIGATION ===== */
+.treeshop-header {
+  background: var(--treeshop-gradient-primary);
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.treeshop-nav-link {
+  color: var(--treeshop-white);
+  text-decoration: none;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  font-weight: 500;
+}
+
+.treeshop-nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--treeshop-blue-50);
+}
+
+/* ===== HERO SECTIONS ===== */
+.treeshop-hero {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: var(--treeshop-white);
+  text-align: center;
+}
+
+.treeshop-hero-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+}
+
+.treeshop-hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: -1;
+}
+
+/* ===== SECTIONS ===== */
+.treeshop-section {
+  padding: var(--space-16) 0;
+}
+
+.treeshop-section-sm {
+  padding: var(--space-12) 0;
+}
+
+.treeshop-section-lg {
+  padding: var(--space-24) 0;
+}
+
+/* ===== CONTAINERS ===== */
+.treeshop-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+.treeshop-container-sm {
+  max-width: 1024px;
+}
+
+.treeshop-container-lg {
+  max-width: 1536px;
+}
+
+/* ===== ANIMATIONS ===== */
+.treeshop-fade-in {
+  animation: treeshopFadeIn 0.6s ease-out;
+}
+
+.treeshop-slide-up {
+  animation: treeshopSlideUp 0.8s ease-out;
+}
+
+.treeshop-hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+.treeshop-hover-scale:hover {
+  transform: scale(1.02);
+}
+
+@keyframes treeshopFadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes treeshopSlideUp {
+  from { opacity: 0; transform: translateY(60px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== UTILITIES ===== */
+.treeshop-transition { transition: var(--transition); }
+.treeshop-transition-slow { transition: var(--transition-slow); }
+.treeshop-shadow { box-shadow: var(--shadow); }
+.treeshop-shadow-lg { box-shadow: var(--shadow-lg); }
+.treeshop-rounded { border-radius: var(--radius); }
+.treeshop-rounded-lg { border-radius: var(--radius-lg); }
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  :root {
+    --text-display-2xl: 3rem;     /* Scale down for mobile */
+    --text-display-xl: 2.5rem;
+    --text-display-lg: 2rem;
+  }
+  
+  .treeshop-section {
+    padding: var(--space-12) 0;
+  }
+  
+  .treeshop-hero {
+    height: 70vh;
+  }
+}
+
+/* ===== SCROLLBAR STYLING ===== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--treeshop-gray-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--treeshop-blue);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--treeshop-blue-dark);
+}

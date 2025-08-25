@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TreeShop Button Components</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../treeshop-design-system.css">
+    <style>
+        .demo-section { 
+            margin: 3rem 0; 
+            padding: 2rem;
+            border: 1px solid var(--treeshop-gray-200);
+            border-radius: var(--radius-lg);
+        }
+        .demo-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 1rem; 
+            margin-top: 1rem; 
+        }
+        .demo-item { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 1rem; 
+            background: var(--treeshop-gray-50); 
+            border-radius: var(--radius);
+        }
+    </style>
+</head>
+<body>
+    <div class="treeshop-container" style="padding: 2rem 0;">
+        <header style="text-align: center; margin-bottom: 3rem;">
+            <h1 class="treeshop-display-lg treeshop-text-blue">TreeShop Button Components</h1>
+            <p class="treeshop-body treeshop-text-gray-600">Professional forestry service button designs</p>
+        </header>
+
+        <!-- Primary Buttons -->
+        <section class="demo-section">
+            <h2 class="treeshop-h2 treeshop-text-gray-900">Primary Buttons</h2>
+            <div class="demo-grid">
+                <div class="demo-item">
+                    <button class="treeshop-btn treeshop-btn-primary">Get Pricing</button>
+                    <span class="treeshop-caption treeshop-text-gray-600" style="margin-top: 0.5rem;">Default</span>
+                </div>
+                <div class="demo-item">
+                    <button class="treeshop-btn treeshop-btn-primary treeshop-btn-lg">Request Quote</button>
+                    <span class="treeshop-caption treeshop-text-gray-600" style="margin-top: 0.5rem;">Large</span>
+                </div>
+                <div class="demo-item">
+                    <button class="treeshop-btn treeshop-btn-primary treeshop-btn-sm">Learn More</button>
+                    <span class="treeshop-caption treeshop-text-gray-600" style="margin-top: 0.5rem;">Small</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Secondary Buttons -->
+        <section class="demo-section">
+            <h2 class="treeshop-h2 treeshop-text-gray-900">Secondary Buttons</h2>
+            <div class="demo-grid">
+                <div class="demo-item">
+                    <button class="treeshop-btn treeshop-btn-secondary">Contact Us</button>
+                    <span class="treeshop-caption treeshop-text-gray-600" style="margin-top: 0.5rem;">Default</span>
+                </div>
+                <div class="demo-item">
+                    <button class="treeshop-btn treeshop-btn-secondary treeshop-btn-lg">View Services</button>
+                    <span class="treeshop-caption treeshop-text-gray-600" style="margin-top: 0.5rem;">Large</span>
+                </div>
+                <div class="demo-item">
+                    <button class="treeshop-btn treeshop-btn-secondary treeshop-btn-sm">Read More</button>
+                    <span class="treeshop-caption treeshop-text-gray-600" style="margin-top: 0.5rem;">Small</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Button States -->
+        <section class="demo-section">
+            <h2 class="treeshop-h2 treeshop-text-gray-900">Button States</h2>
+            <div class="demo-grid">
+                <div class="demo-item">
+                    <button class="treeshop-btn treeshop-btn-primary">Normal State</button>
+                    <span class="treeshop-caption treeshop-text-gray-600" style="margin-top: 0.5rem;">Hover to see effect</span>
+                </div>
+                <div class="demo-item">
+                    <button class="treeshop-btn treeshop-btn-primary" style="background: var(--treeshop-blue-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);">Hover State</button>
+                    <span class="treeshop-caption treeshop-text-gray-600" style="margin-top: 0.5rem;">Preview</span>
+                </div>
+                <div class="demo-item">
+                    <button class="treeshop-btn treeshop-btn-primary" disabled style="opacity: 0.6; cursor: not-allowed;">Disabled</button>
+                    <span class="treeshop-caption treeshop-text-gray-600" style="margin-top: 0.5rem;">Disabled state</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Link Buttons -->
+        <section class="demo-section">
+            <h2 class="treeshop-h2 treeshop-text-gray-900">Link Buttons</h2>
+            <div class="demo-grid">
+                <div class="demo-item">
+                    <a href="https://treeshop.pro" target="_blank" class="treeshop-btn treeshop-btn-primary">Get Instant Pricing</a>
+                    <span class="treeshop-caption treeshop-text-gray-600" style="margin-top: 0.5rem;">External link</span>
+                </div>
+                <div class="demo-item">
+                    <a href="/services" class="treeshop-btn treeshop-btn-secondary">Our Services</a>
+                    <span class="treeshop-caption treeshop-text-gray-600" style="margin-top: 0.5rem;">Internal link</span>
+                </div>
+                <div class="demo-item">
+                    <a href="tel:386.843.5266" class="treeshop-btn treeshop-btn-primary">📞 Call Now</a>
+                    <span class="treeshop-caption treeshop-text-gray-600" style="margin-top: 0.5rem;">Phone link</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Button Groups -->
+        <section class="demo-section">
+            <h2 class="treeshop-h2 treeshop-text-gray-900">Button Groups</h2>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <button class="treeshop-btn treeshop-btn-primary treeshop-btn-lg">Get Pricing</button>
+                <button class="treeshop-btn treeshop-btn-secondary treeshop-btn-lg">Learn More</button>
+            </div>
+            <p class="treeshop-body-sm treeshop-text-gray-600" style="text-align: center; margin-top: 1rem;">
+                Typical call-to-action button combination
+            </p>
+        </section>
+
+    </div>
+</body>
+</html>

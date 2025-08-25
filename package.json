@@ -1,19 +1,26 @@
 {
-  "name": "fltreeshop-site",
+  "name": "fltreeshop-astro",
+  "type": "module",
   "version": "1.0.0",
-  "description": "The Tree Shop - Professional Forestry Mulching & Land Clearing Services in Florida",
+  "description": "The Tree Shop - Professional Forestry Mulching & Land Clearing Services",
   "scripts": {
-    "dev": "python3 -m http.server 8080",
-    "build": "echo 'Static site - no build required'",
-    "start": "python3 -m http.server 8080"
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^5.13.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.0",
+    "typescript": "^5.7.0"
   },
   "keywords": [
     "forestry mulching",
-    "land clearing",
+    "land clearing", 
     "tree services",
     "florida",
-    "tree shop"
-  ],
-  "author": "The Tree Shop",
-  "license": "MIT"
+    "astro"
+  ]
 }

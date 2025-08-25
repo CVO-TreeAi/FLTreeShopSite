@@ -1,0 +1,854 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Get Your Free Estimate - The Tree Shop">
+  <!-- Back to Original Header but Blue Theme -->
+  <header class="TopHeader">
+    <div class="container">
+      <div class="d-flex">
+        <span class="Logo"><a href="/" aria-label="site-logo">The Tree Shop</a></span>
+        <div class="TopMainRight">
+          <div class="clearfix">
+            <div class="PhoneImg" style="display:none">
+              <a href="tel:386.843.5266" aria-label="telephone"><i class="bi bi-telephone"></i>386.843.5266</a>
+            </div>
+            <a href="/#menu" class="menu-link">
+              <div class="menu-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <h6 class="mb-0 fs-14 lh-2 text-uppercase white-color">menu</h6>
+            </a>
+            <nav id="menu" class="menu">
+              <div class="sidebar-menu">
+                <div class="d-flex">
+                  <div class="col-info">
+                    <div class="PhoneImg">
+                      <a href="tel:386.843.5266" aria-label="telephone"> <i class="bi bi-telephone"></i> 386.843.5266</a>
+                    </div>
+                  </div>
+                  <div class="all-menu">
+                    <ul>
+                      <li><a href="/">Home</a></li>
+                      <li><a href="/estimate">Get Pricing</a></li>
+                      <li><a href="/testimonials">Testimonials</a></li>
+                      <li><a href="/about">About Us</a></li>
+                      <li><a href="/contact">Contact Us</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Estimate Application -->
+  <main class="treeshop-section" style="background: linear-gradient(135deg, #1e3a8a, #1e40af); min-height: 100vh;">
+    <div class="treeshop-container">
+      
+      <!-- Header -->
+      <div class="text-center mb-12">
+        <h1 class="treeshop-display-lg text-white mb-4">
+          Get Your <span class="text-yellow-300">Free Estimate</span>
+        </h1>
+        <p class="treeshop-h5 text-blue-100">
+          Professional pricing for forestry mulching and land clearing services in Florida
+        </p>
+      </div>
+
+      <!-- TreeShop Pricing Application -->
+      <div id="treeshop-estimate-app">
+        <!-- This will be populated by our JavaScript -->
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer-wrapper">
+    <div class="container">
+      <div class="d-flex">
+        <div class="col copyright g-0">
+          <div class="col">
+            <div class="col footer-link">
+              <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/estimate">Get Pricing</a></li>
+                <li><a href="/testimonials">Testimonials</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/contact">Contact Us</a></li>
+                <li><a href="/privacy-policy">Privacy Policy</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="copy">
+            COPYRIGHT &copy; 2025 THE TREE SHOP<br> ALL RIGHTS RESERVED.
+          </div>
+          <div class="developed-by">
+            Built by <a href="https://www.fltreeshop.com/" target="_blank">The Tree Shop</a>
+          </div>
+        </div>
+        <div class="col right">
+          <div class="ImgWrap">
+            <img src="/images/content/footer-img.jpg" alt="" width="180" height="75">
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+</Layout>
+
+<!-- Google Maps API - Direct Load -->
+<script async defer 
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfpqXu-EQV5MWIFBodDFB1K3VZtz1kF5A&libraries=places,geometry&callback=initEstimateApp">
+</script>
+
+<script is:inline>
+  // TreeShop Maps Configuration
+  const GOOGLE_MAPS_API_KEY = 'AIzaSyCfpqXu-EQV5MWIFBodDFB1K3VZtz1kF5A';
+  
+  // Global error handler for Google Maps
+  window.gm_authFailure = function() {
+    console.error('Google Maps authentication failed');
+    alert('Google Maps could not be loaded. Please contact support.');
+  };
+  
+  // TreeShop Estimate Application
+  window.initEstimateApp = function() {
+    const app = document.getElementById('treeshop-estimate-app');
+    
+    // Application State
+    let currentStep = 'contact';
+    let customerInfo = { name: '', phone: '', email: '' };
+    let projectAddress = '';
+    let selectedService = 'forestry';
+    let estimate = null;
+    
+    // TreeShop Base Location - New Smyrna Beach, FL
+    const TREESHOP_BASE = { lat: 29.0216, lng: -81.0770 };
+    
+    // Pricing Structure (same as treeshop.app)
+    const PACKAGE_PRICING = {
+      forestry: {
+        'small': { label: 'Small Package', description: '4" DBH & Under', rate: 2125 },
+        'medium': { label: 'Medium Package', description: '6" DBH & Under', rate: 2500 },
+        'large': { label: 'Large Package', description: '8" DBH & Under', rate: 3375 },
+        'xlarge': { label: 'X-Large Package', description: '10" DBH & Under', rate: 4250 }
+      },
+      landClearing: {
+        'light': { label: 'Light Clearing', description: 'Light vegetation & brush', rate: 3000 },
+        'average': { label: 'Average Clearing', description: 'Moderate vegetation & trees', rate: 4500 },
+        'thick': { label: 'Thick Clearing', description: 'Dense vegetation & trees', rate: 6000 },
+        'heavy': { label: 'Heavy Clearing', description: 'Very dense forest & large trees', rate: 8500 },
+        'wet': { label: 'Wet Conditions', description: 'Wetland or swampy areas', rate: 10000 }
+      }
+    };
+    
+    // Render functions
+    function renderStep1() {
+      return `
+        <div class="max-w-2xl mx-auto">
+          <div style="background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 12px 24px rgba(0,0,0,0.1);">
+            <div class="text-center mb-6">
+              <h2 class="treeshop-h2 treeshop-text-blue mb-3">Step 1: Contact Information</h2>
+              <p class="treeshop-body treeshop-text-gray-600">
+                We'll use your information to provide accurate pricing and follow up with your proposal
+              </p>
+            </div>
+            
+            <div class="space-y-4">
+              <div>
+                <label class="block treeshop-body-sm font-semibold treeshop-text-gray-700 mb-2">
+                  Your Name *
+                </label>
+                <input
+                  type="text"
+                  id="customer-name"
+                  class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:outline-none transition-all"
+                  placeholder="First and Last Name"
+                  style="width: 100%;"
+                />
+              </div>
+              
+              <div>
+                <label class="block treeshop-body-sm font-semibold treeshop-text-gray-700 mb-2">
+                  Phone Number *
+                </label>
+                <input
+                  type="tel"
+                  id="customer-phone"
+                  class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:outline-none transition-all"
+                  placeholder="(555) 123-4567"
+                  style="width: 100%;"
+                />
+              </div>
+              
+              <div>
+                <label class="block treeshop-body-sm font-semibold treeshop-text-gray-700 mb-2">
+                  Email Address *
+                </label>
+                <input
+                  type="email"
+                  id="customer-email"
+                  class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:outline-none transition-all"
+                  placeholder="your@email.com"
+                  style="width: 100%;"
+                />
+              </div>
+              
+              <div>
+                <label class="block treeshop-body-sm font-semibold treeshop-text-gray-700 mb-2">
+                  Project Address *
+                </label>
+                <input
+                  type="text"
+                  id="project-address"
+                  class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:outline-none transition-all"
+                  placeholder="Start typing your address..."
+                  style="width: 100%;"
+                />
+                <p class="treeshop-caption treeshop-text-gray-500 mt-1">Full address of the property to be cleared</p>
+              </div>
+              
+              <div style="background: #eff6ff; border: 1px solid #3b82f6; border-radius: 8px; padding: 1rem; margin-top: 1rem;">
+                <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                  <div style="color: #2563eb; margin-top: 0.25rem;">🔒</div>
+                  <div>
+                    <h3 style="font-weight: 600; color: #2563eb; margin-bottom: 0.5rem;">Your Information is Secure</h3>
+                    <ul style="font-size: 0.875rem; color: #4b5563; margin: 0; padding-left: 1rem;">
+                      <li>Used only for providing your estimate and project communication</li>
+                      <li>We'll validate your proposal and follow up within 4 hours</li>
+                      <li>No spam or unwanted calls - only project-related contact</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              
+              <button
+                onclick="nextStep()"
+                id="step1-continue"
+                disabled
+                class="treeshop-btn treeshop-btn-primary treeshop-btn-lg"
+                style="width: 100%; margin-top: 1.5rem; opacity: 0.5; cursor: not-allowed;"
+              >
+                Continue to Service Selection →
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    function renderStep2() {
+      return `
+        <div class="max-w-4xl mx-auto">
+          <div style="background: white; border-radius: 12px; padding: 2rem;">
+            <div class="text-center mb-8">
+              <h2 class="treeshop-h2 treeshop-text-blue mb-3">Step 2: Choose Your Service</h2>
+              <p class="treeshop-body treeshop-text-gray-600">
+                Select the type of land management service you need
+              </p>
+              <div style="background: #dcfce7; border: 1px solid #16a34a; border-radius: 8px; padding: 0.75rem; margin-top: 1rem; font-size: 0.875rem;">
+                <span style="color: #16a34a;">✓ ${customerInfo.name} • ${projectAddress}</span>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+              <!-- Forestry Mulching -->
+              <div onclick="selectService('forestry')" id="forestry-card" 
+                   style="cursor: pointer; border-radius: 12px; border: 2px solid #d1d5db; padding: 1.5rem; transition: all 0.3s ease; background: #f9fafb;">
+                <div class="text-center">
+                  <div style="font-size: 3rem; margin-bottom: 1rem;">🌲</div>
+                  <h3 class="treeshop-h3 treeshop-text-gray-900 mb-3">Forestry Mulching</h3>
+                  <p class="treeshop-body-sm treeshop-text-gray-600 mb-4">
+                    Cut and mulch vegetation in place. Environmentally friendly - no debris removal needed.
+                  </p>
+                  <div style="background: #eff6ff; border-radius: 8px; padding: 0.75rem; font-size: 0.75rem; color: #1f2937;">
+                    <div style="font-weight: 600; margin-bottom: 0.25rem;">Package Options:</div>
+                    <div>Small (4"), Medium (6"), Large (8"), X-Large (10")</div>
+                    <div style="margin-top: 0.5rem; opacity: 0.75;">Professional forestry mulching service</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Land Clearing -->
+              <div onclick="selectService('landClearing')" id="landClearing-card"
+                   style="cursor: pointer; border-radius: 12px; border: 2px solid #d1d5db; padding: 1.5rem; transition: all 0.3s ease; background: #f9fafb;">
+                <div class="text-center">
+                  <div style="font-size: 3rem; margin-bottom: 1rem;">🏞️</div>
+                  <h3 class="treeshop-h3 treeshop-text-gray-900 mb-3">Land Clearing</h3>
+                  <p class="treeshop-body-sm treeshop-text-gray-600 mb-4">
+                    Complete vegetation removal with debris haul-away. Perfect for development preparation.
+                  </p>
+                  <div style="background: #eff6ff; border-radius: 8px; padding: 0.75rem; font-size: 0.75rem; color: #1f2937;">
+                    <div style="font-weight: 600; margin-bottom: 0.25rem;">Package Options:</div>
+                    <div>Light, Average, Thick, Heavy, Wet Conditions</div>
+                    <div style="margin-top: 0.5rem; opacity: 0.75;">Complete vegetation removal service</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <button onclick="previousStep()" class="treeshop-text-blue hover:underline">
+                ← Back to Contact Info
+              </button>
+              
+              <button onclick="nextStep()" class="treeshop-btn treeshop-btn-primary treeshop-btn-lg">
+                Continue to Project Details →
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    function renderStep3() {
+      const packages = selectedService === 'forestry' ? PACKAGE_PRICING.forestry : PACKAGE_PRICING.landClearing;
+      
+      return `
+        <div class="max-w-3xl mx-auto">
+          <div style="background: white; border-radius: 12px; padding: 2rem;">
+            <div class="text-center mb-6">
+              <h2 class="treeshop-h2 treeshop-text-blue mb-3">Step 3: Project Details</h2>
+              <p class="treeshop-body treeshop-text-gray-600">
+                Tell us about your ${selectedService === 'forestry' ? 'forestry mulching' : 'land clearing'} project
+              </p>
+              <div style="background: #dcfce7; border: 1px solid #16a34a; border-radius: 8px; padding: 0.75rem; margin-top: 1rem; font-size: 0.875rem;">
+                <span style="color: #16a34a;">
+                  ✓ ${customerInfo.name} • ${projectAddress} • ${selectedService === 'forestry' ? 'Forestry Mulching' : 'Land Clearing'}
+                </span>
+              </div>
+            </div>
+            
+            <div class="space-y-6">
+              <!-- Project Size -->
+              <div>
+                <label class="block treeshop-body-sm font-semibold treeshop-text-gray-700 mb-2">
+                  Project Size (Acres) *
+                </label>
+                <input
+                  type="number"
+                  id="project-acres"
+                  min="0.25"
+                  step="0.25"
+                  onchange="calculateEstimate()"
+                  class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:outline-none transition-all"
+                  placeholder="e.g., 3.5"
+                  style="width: 100%;"
+                />
+              </div>
+
+              <!-- Package Selection -->
+              <div>
+                <label class="block treeshop-body-sm font-semibold treeshop-text-gray-700 mb-3">
+                  Choose Your Package *
+                </label>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;" id="package-grid">
+                  ${Object.entries(packages).map(([key, pkg]) => `
+                    <button
+                      onclick="selectPackage('${key}')"
+                      id="package-${key}"
+                      style="padding: 1rem; border-radius: 8px; border: 2px solid #d1d5db; text-align: left; transition: all 0.3s ease; background: #f9fafb;"
+                    >
+                      <div style="font-weight: 600; font-size: 1.125rem; color: #1f2937;">${pkg.label}</div>
+                      <div style="font-size: 0.875rem; opacity: 0.75; margin-bottom: 0.5rem; color: #4b5563;">${pkg.description}</div>
+                      <div style="font-size: 0.75rem; color: #2563eb; font-weight: 600;">$${pkg.rate}/acre</div>
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+
+              <!-- Estimate Result -->
+              <div id="estimate-result" style="display: none;">
+                <!-- Will be populated by calculation -->
+              </div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
+              <button onclick="previousStep()" class="treeshop-text-blue hover:underline">
+                ← Back to Service Selection
+              </button>
+              
+              <button onclick="nextStep()" id="step3-continue" disabled 
+                      class="treeshop-btn treeshop-btn-primary treeshop-btn-lg"
+                      style="opacity: 0.5; cursor: not-allowed;">
+                Get My Proposal →
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    function renderStep4() {
+      if (!estimate) return '';
+      
+      return `
+        <div class="max-w-3xl mx-auto">
+          <div style="background: white; border-radius: 12px; padding: 2rem;">
+            <div class="text-center mb-8">
+              <h2 class="treeshop-h2 treeshop-text-blue mb-4">
+                🎉 Your Proposal is Ready!
+              </h2>
+              <p class="treeshop-h4 treeshop-text-gray-700">
+                <strong>${customerInfo.name}</strong>, here's your ${selectedService === 'forestry' ? 'forestry mulching' : 'land clearing'} proposal
+              </p>
+            </div>
+
+            <!-- Project Summary -->
+            <div style="background: #eff6ff; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem;">
+              <h3 class="treeshop-h3 treeshop-text-blue mb-4">Project Summary</h3>
+              <div class="space-y-3">
+                <div style="display: flex; justify-content: space-between;">
+                  <span class="treeshop-body treeshop-text-gray-600">Property Address:</span>
+                  <span class="treeshop-body treeshop-text-gray-900" style="text-align: right; font-size: 0.875rem;">${projectAddress}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span class="treeshop-body treeshop-text-gray-600">Project Size:</span>
+                  <span class="treeshop-body treeshop-text-gray-900">${estimate.acres} acres</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span class="treeshop-body treeshop-text-gray-600">Service Type:</span>
+                  <span class="treeshop-body treeshop-text-gray-900">${selectedService === 'forestry' ? 'Forestry Mulching' : 'Land Clearing'}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span class="treeshop-body treeshop-text-gray-600">Package:</span>
+                  <span class="treeshop-body treeshop-text-gray-900" style="text-align: right; font-size: 0.875rem;">${estimate.packageLabel}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pricing Breakdown -->
+            <div style="background: #dcfce7; border: 1px solid #16a34a; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem;">
+              <div class="text-center">
+                <h3 class="treeshop-h3 treeshop-text-gray-900 mb-2">Your Project Total</h3>
+                <div style="font-size: 3rem; font-weight: 700; color: #16a34a; margin-bottom: 0.5rem;">
+                  $${Math.round(estimate.finalTotal).toLocaleString()}
+                </div>
+                <p class="treeshop-body-sm treeshop-text-gray-600">
+                  This price includes transportation, materials, and 10% project cushion.<br/>
+                  We'll validate this proposal and follow up to confirm all details.
+                </p>
+              </div>
+            </div>
+
+            <!-- What Happens Next -->
+            <div style="background: #f9fafb; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem;">
+              <h3 class="treeshop-h3 treeshop-text-gray-900 mb-4">What Happens Next</h3>
+              <div class="space-y-4">
+                <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                  <div style="width: 2rem; height: 2rem; border-radius: 50%; background: #2563eb; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem;">1</div>
+                  <div>
+                    <div style="font-weight: 600; color: #1f2937;">Office Validation</div>
+                    <div style="font-size: 0.875rem; color: #4b5563;">Our team validates your proposal within 4 hours during business hours</div>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                  <div style="width: 2rem; height: 2rem; border-radius: 50%; background: #2563eb; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem;">2</div>
+                  <div>
+                    <div style="font-weight: 600; color: #1f2937;">Personal Follow-Up</div>
+                    <div style="font-size: 0.875rem; color: #4b5563;">We'll contact you to confirm details and answer any questions</div>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                  <div style="width: 2rem; height: 2rem; border-radius: 50%; background: #2563eb; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem;">3</div>
+                  <div>
+                    <div style="font-weight: 600; color: #1f2937;">Project Scheduling</div>
+                    <div style="font-size: 0.875rem; color: #4b5563;">Schedule your land transformation at a convenient time</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div style="background: #16a34a; background: rgba(22, 163, 74, 0.1); border-radius: 8px; padding: 1rem; margin-top: 1.5rem;">
+                <p style="color: #16a34a; font-size: 0.875rem; font-weight: 500; margin: 0;">
+                  💰 <strong>Price Lock:</strong> This pricing is guaranteed for 30 days from today.
+                </p>
+              </div>
+            </div>
+            
+            <div class="text-center">
+              <button onclick="downloadPDF()" class="treeshop-btn treeshop-btn-primary treeshop-btn-lg" style="margin-right: 1rem;">
+                📥 Download Proposal PDF
+              </button>
+              <button onclick="startNewEstimate()" class="treeshop-btn treeshop-btn-secondary">
+                Start New Estimate
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Step Management
+    window.nextStep = function() {
+      if (currentStep === 'contact') {
+        // Validate contact form
+        customerInfo.name = document.getElementById('customer-name').value;
+        customerInfo.phone = document.getElementById('customer-phone').value;
+        customerInfo.email = document.getElementById('customer-email').value;
+        projectAddress = document.getElementById('project-address').value;
+        
+        if (customerInfo.name && customerInfo.phone && customerInfo.email && projectAddress) {
+          currentStep = 'service';
+          renderCurrentStep();
+        }
+      } else if (currentStep === 'service') {
+        currentStep = 'project';
+        renderCurrentStep();
+      } else if (currentStep === 'project') {
+        currentStep = 'proposal';
+        renderCurrentStep();
+        submitLeadData();
+      }
+    };
+
+    window.previousStep = function() {
+      if (currentStep === 'service') {
+        currentStep = 'contact';
+      } else if (currentStep === 'project') {
+        currentStep = 'service';
+      }
+      renderCurrentStep();
+    };
+
+    window.selectService = function(service) {
+      selectedService = service;
+      
+      // Update visual selection
+      document.querySelectorAll('[id$="-card"]').forEach(card => {
+        card.style.borderColor = '#d1d5db';
+        card.style.background = '#f9fafb';
+      });
+      
+      const selectedCard = document.getElementById(service + '-card');
+      if (selectedCard) {
+        selectedCard.style.borderColor = '#2563eb';
+        selectedCard.style.background = '#eff6ff';
+      }
+    };
+
+    let selectedPackage = null;
+    
+    window.selectPackage = function(packageKey) {
+      selectedPackage = packageKey;
+      
+      // Update visual selection
+      document.querySelectorAll('[id^="package-"]').forEach(btn => {
+        btn.style.borderColor = '#d1d5db';
+        btn.style.background = '#f9fafb';
+      });
+      
+      const selectedBtn = document.getElementById('package-' + packageKey);
+      if (selectedBtn) {
+        selectedBtn.style.borderColor = '#2563eb';
+        selectedBtn.style.background = '#eff6ff';
+      }
+      
+      calculateEstimate();
+    };
+
+    window.calculateEstimate = function() {
+      const acres = parseFloat(document.getElementById('project-acres')?.value || '0');
+      
+      if (acres > 0 && selectedPackage) {
+        const packages = selectedService === 'forestry' ? PACKAGE_PRICING.forestry : PACKAGE_PRICING.landClearing;
+        const packageInfo = packages[selectedPackage];
+        
+        // Transportation calculation (simplified)
+        const transportCost = Math.max(350, acres * 100); // Minimum $350 or $100/acre
+        const baseTotal = packageInfo.rate * acres;
+        const cushion = (baseTotal + transportCost) * 0.10;
+        const finalTotal = baseTotal + transportCost + cushion;
+        
+        estimate = {
+          acres,
+          packageKey: selectedPackage,
+          packageLabel: packageInfo.label,
+          baseTotal,
+          transportCost,
+          cushion,
+          finalTotal
+        };
+        
+        // Show estimate result
+        const resultDiv = document.getElementById('estimate-result');
+        if (resultDiv) {
+          resultDiv.style.display = 'block';
+          resultDiv.innerHTML = `
+            <div style="background: #dcfce7; border: 1px solid #16a34a; border-radius: 8px; padding: 1rem;">
+              <div class="text-center">
+                <div style="color: #16a34a; margin-bottom: 0.5rem;">✓ Project Calculated Successfully</div>
+                <div style="color: #1f2937; font-size: 0.875rem;">
+                  ${acres} acres • ${packageInfo.label}
+                </div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: #16a34a; margin-top: 0.5rem;">
+                  $${Math.round(finalTotal).toLocaleString()}
+                </div>
+                <p style="color: #1f2937; font-size: 0.75rem; margin-top: 0.5rem; margin-bottom: 0;">
+                  Pricing will be finalized on the next step
+                </p>
+              </div>
+            </div>
+          `;
+        }
+        
+        // Enable continue button
+        const continueBtn = document.getElementById('step3-continue');
+        if (continueBtn) {
+          continueBtn.disabled = false;
+          continueBtn.style.opacity = '1';
+          continueBtn.style.cursor = 'pointer';
+        }
+      }
+    };
+
+    // Lead submission
+    async function submitLeadData() {
+      try {
+        // For now, just log the data (will integrate with Convex later)
+        console.log('Submitting lead:', {
+          customer: customerInfo,
+          address: projectAddress,
+          service: selectedService,
+          estimate: estimate
+        });
+        
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Could integrate with your existing treeshop-production API here
+        // or send to Convex database
+        
+      } catch (error) {
+        console.error('Lead submission error:', error);
+      }
+    }
+
+    window.downloadPDF = function() {
+      // Placeholder for PDF generation
+      alert('PDF download would be implemented here with your proposal details');
+    };
+
+    window.startNewEstimate = function() {
+      currentStep = 'contact';
+      customerInfo = { name: '', phone: '', email: '' };
+      projectAddress = '';
+      selectedService = 'forestry';
+      estimate = null;
+      selectedPackage = null;
+      renderCurrentStep();
+    };
+
+    function renderCurrentStep() {
+      let content = '';
+      
+      if (currentStep === 'contact') {
+        content = renderStep1();
+      } else if (currentStep === 'service') {
+        content = renderStep2();
+      } else if (currentStep === 'project') {
+        content = renderStep3();
+      } else if (currentStep === 'proposal') {
+        content = renderStep4();
+      }
+      
+      app.innerHTML = content;
+      
+      // Add form validation and Google Places for step 1
+      if (currentStep === 'contact') {
+        setTimeout(() => {
+          initGooglePlaces();
+          
+          const fields = ['customer-name', 'customer-phone', 'customer-email', 'project-address'];
+          fields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+              field.addEventListener('input', function() {
+                const allFilled = fields.every(id => document.getElementById(id)?.value.trim());
+                const continueBtn = document.getElementById('step1-continue');
+                if (continueBtn) {
+                  continueBtn.disabled = !allFilled;
+                  continueBtn.style.opacity = allFilled ? '1' : '0.5';
+                  continueBtn.style.cursor = allFilled ? 'pointer' : 'not-allowed';
+                }
+              });
+            }
+          });
+        }, 100);
+      }
+    }
+    
+    // Initialize Google Places Autocomplete
+    function initGooglePlaces() {
+      const addressInput = document.getElementById('project-address');
+      if (addressInput && window.google) {
+        const autocomplete = new google.maps.places.Autocomplete(addressInput, {
+          componentRestrictions: { country: 'us' },
+          fields: ['formatted_address', 'geometry', 'address_components'],
+          types: ['address']
+        });
+        
+        autocomplete.addListener('place_changed', function() {
+          const place = autocomplete.getPlace();
+          if (place.geometry) {
+            projectAddress = place.formatted_address;
+            
+            // Calculate distance from TreeShop base for transportation cost
+            const baseLocation = new google.maps.LatLng(29.0216, -81.0770);
+            const projectLocation = new google.maps.LatLng(
+              place.geometry.location.lat(),
+              place.geometry.location.lng()
+            );
+            
+            // Get driving distance/time
+            const distanceService = new google.maps.DistanceMatrixService();
+            distanceService.getDistanceMatrix({
+              origins: [baseLocation],
+              destinations: [projectLocation],
+              travelMode: google.maps.TravelMode.DRIVING,
+              unitSystem: google.maps.UnitSystem.IMPERIAL
+            }, function(response, status) {
+              if (status === google.maps.DistanceMatrixStatus.OK) {
+                const result = response.rows[0].elements[0];
+                if (result.status === 'OK') {
+                  const drivingTimeMinutes = Math.ceil(result.duration.value / 60);
+                  const roundTripMinutes = drivingTimeMinutes * 2;
+                  const transportHours = Math.ceil(roundTripMinutes / 60);
+                  const transportCost = transportHours * 350;
+                  
+                  console.log('Transport calculation:', {
+                    distance: result.distance.text,
+                    oneWayTime: drivingTimeMinutes,
+                    roundTripTime: roundTripMinutes,
+                    transportHours,
+                    cost: transportCost
+                  });
+                  
+                  // Store transport data for pricing calculation
+                  window.transportData = {
+                    distance: result.distance.value * 0.000621371, // Convert to miles
+                    timeMinutes: drivingTimeMinutes,
+                    cost: transportCost
+                  };
+                }
+              }
+            });
+            
+            // Trigger form validation update
+            const event = new Event('input');
+            addressInput.dispatchEvent(event);
+          }
+        });
+      }
+    }
+    
+    // Enhanced calculation with transport data
+    window.calculateEstimate = function() {
+      const acres = parseFloat(document.getElementById('project-acres')?.value || '0');
+      
+      if (acres > 0 && selectedPackage) {
+        const packages = selectedService === 'forestry' ? PACKAGE_PRICING.forestry : PACKAGE_PRICING.landClearing;
+        const packageInfo = packages[selectedPackage];
+        
+        // Use real transport data if available, otherwise fallback
+        const transportCost = window.transportData ? window.transportData.cost : Math.max(350, acres * 100);
+        const baseTotal = packageInfo.rate * acres;
+        const cushion = (baseTotal + transportCost) * 0.10;
+        const finalTotal = baseTotal + transportCost + cushion;
+        
+        estimate = {
+          acres,
+          packageKey: selectedPackage,
+          packageLabel: packageInfo.label,
+          baseTotal,
+          transportCost,
+          cushion,
+          finalTotal,
+          transportInfo: window.transportData || null
+        };
+        
+        // Show estimate result with transport details
+        const resultDiv = document.getElementById('estimate-result');
+        if (resultDiv) {
+          resultDiv.style.display = 'block';
+          resultDiv.innerHTML = `
+            <div style="background: #dcfce7; border: 1px solid #16a34a; border-radius: 8px; padding: 1rem;">
+              <div class="text-center">
+                <div style="color: #16a34a; margin-bottom: 0.5rem;">✓ Project Calculated Successfully</div>
+                <div style="color: #1f2937; font-size: 0.875rem;">
+                  ${acres} acres • ${packageInfo.label}
+                  ${window.transportData ? ` • ${Math.round(window.transportData.distance)} miles from base` : ''}
+                </div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: #16a34a; margin-top: 0.5rem;">
+                  $${Math.round(finalTotal).toLocaleString()}
+                </div>
+                <div style="font-size: 0.75rem; color: #4b5563; margin-top: 0.5rem;">
+                  Base: $${Math.round(baseTotal).toLocaleString()} + Transport: $${Math.round(transportCost).toLocaleString()} + Cushion: $${Math.round(cushion).toLocaleString()}
+                </div>
+                <p style="color: #1f2937; font-size: 0.75rem; margin-top: 0.5rem; margin-bottom: 0;">
+                  Final pricing will be confirmed on the next step
+                </p>
+              </div>
+            </div>
+          `;
+        }
+        
+        // Enable continue button
+        const continueBtn = document.getElementById('step3-continue');
+        if (continueBtn) {
+          continueBtn.disabled = false;
+          continueBtn.style.opacity = '1';
+          continueBtn.style.cursor = 'pointer';
+        }
+      }
+    };
+    
+    // Initialize
+    renderCurrentStep();
+    
+    // Set up Google Places when step 1 is rendered
+    setTimeout(() => {
+      if (currentStep === 'contact') {
+        initGooglePlaces();
+      }
+    }, 100);
+  };
+  
+  // Maps API loads automatically via script tag above
+</script>
+
+<style>
+  /* Additional TreeShop Blue Theme Styles for Estimate Page */
+  .space-y-3 > * + * { margin-top: 0.75rem; }
+  .space-y-4 > * + * { margin-top: 1rem; }
+  .space-y-6 > * + * { margin-top: 1.5rem; }
+  
+  .w-full { width: 100%; }
+  .text-center { text-align: center; }
+  .mb-2 { margin-bottom: 0.5rem; }
+  .mb-3 { margin-bottom: 0.75rem; }
+  .mb-4 { margin-bottom: 1rem; }
+  .mb-6 { margin-bottom: 1.5rem; }
+  .mb-8 { margin-bottom: 2rem; }
+  .mb-12 { margin-bottom: 3rem; }
+  
+  .max-w-2xl { max-width: 42rem; }
+  .max-w-3xl { max-width: 48rem; }
+  .max-w-4xl { max-width: 56rem; }
+  .mx-auto { margin-left: auto; margin-right: auto; }
+  
+  input:focus, button:hover {
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+  }
+  
+  .hover\\:underline:hover {
+    text-decoration: underline;
+  }
+</style>

@@ -1,0 +1,27 @@
+# Override GitHub language detection
+*.astro linguist-language=Astro
+*.astro linguist-detectable=true
+
+# Mark HTML files as templates (not primary language)
+archive-development/**/*.html linguist-vendored=true
+public/**/*.html linguist-generated=true
+
+# Mark CSS/JS as supporting files
+*.css linguist-detectable=false
+*.js linguist-detectable=false
+public/assets/** linguist-vendored=true
+
+# Mark media files appropriately
+*.jpg linguist-detectable=false
+*.png linguist-detectable=false
+*.gif linguist-detectable=false
+*.mp4 linguist-detectable=false
+*.svg linguist-detectable=false
+*.ico linguist-detectable=false
+*.ttf linguist-detectable=false
+*.woff linguist-detectable=false
+*.woff2 linguist-detectable=false
+*.eot linguist-detectable=false
+
+# Mark documentation
+*.md linguist-documentation=true
