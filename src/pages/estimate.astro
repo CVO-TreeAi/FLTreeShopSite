@@ -608,25 +608,61 @@ import Layout from '../layouts/Layout.astro';
       }
     };
 
-    // Lead submission
+    // Lead submission with Terminal sync
     async function submitLeadData() {
       try {
-        // For now, just log the data (will integrate with Convex later)
-        console.log('Submitting lead:', {
-          customer: customerInfo,
+        const leadData = {
+          name: customerInfo.name,
+          email: customerInfo.email,
+          phone: customerInfo.phone,
           address: projectAddress,
-          service: selectedService,
-          estimate: estimate
+          acreage: estimate.acres,
+          selectedPackage: estimate.packageLabel,
+          message: '',
+          source: 'fltreeshop.com',
+          status: 'new',
+          createdAt: Date.now(),
+          estimatedValue: Math.round(estimate.finalTotal)
+        };
+        
+        console.log('Submitting lead to Terminal:', leadData);
+        
+        // Send to Terminal's Convex backend
+        const response = await fetch('https://earnest-lemming-634.convex.cloud/api/mutation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: 'leads:createLead',
+            args: leadData
+          })
         });
         
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        if (!response.ok) {
+          throw new Error('Terminal sync failed');
+        }
         
-        // Could integrate with your existing treeshop-production API here
-        // or send to Convex database
+        console.log('✅ Lead synced to Terminal successfully');
+        
+        // Track with Terminal
+        if (window.terminalTrack) {
+          window.terminalTrack('lead_submission', {
+            source: 'fltreeshop.com',
+            package: estimate.packageKey,
+            value: estimate.finalTotal
+          });
+        }
+        
+        // Track with GA4
+        if (window.gtag) {
+          window.gtag('event', 'generate_lead', {
+            value: estimate.finalTotal,
+            currency: 'USD'
+          });
+        }
         
       } catch (error) {
         console.error('Lead submission error:', error);
+        // Don't block the user flow - still show success
       }
     }
 
