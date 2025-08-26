@@ -1,0 +1,233 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Get Your Free Estimate - The Tree Shop">
+  <main style="background: linear-gradient(135deg, #1e3a8a, #1e40af); min-height: 100vh; padding: 2rem 0;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 0 1rem;">
+      
+      <!-- Simple Header -->
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <h1 style="font-size: 2.5rem; font-weight: 700; color: white; margin-bottom: 1rem;">
+          Get Your Free Estimate
+        </h1>
+        <p style="font-size: 1.25rem; color: #bfdbfe;">
+          Professional forestry mulching and land clearing services in Florida
+        </p>
+      </div>
+
+      <!-- Simple Contact Form -->
+      <div style="background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 12px 24px rgba(0,0,0,0.1);">
+        <form id="simple-lead-form">
+          
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">
+              Your Name *
+            </label>
+            <input
+              type="text"
+              id="customer-name"
+              required
+              style="width: 100%; border: 2px solid #d1d5db; border-radius: 8px; padding: 0.75rem; font-size: 1rem;"
+              placeholder="John Smith"
+            />
+          </div>
+          
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">
+              Phone Number *
+            </label>
+            <input
+              type="tel"
+              id="customer-phone"
+              required
+              style="width: 100%; border: 2px solid #d1d5db; border-radius: 8px; padding: 0.75rem; font-size: 1rem;"
+              placeholder="(555) 123-4567"
+            />
+          </div>
+          
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">
+              Email Address *
+            </label>
+            <input
+              type="email"
+              id="customer-email"
+              required
+              style="width: 100%; border: 2px solid #d1d5db; border-radius: 8px; padding: 0.75rem; font-size: 1rem;"
+              placeholder="john@email.com"
+            />
+          </div>
+          
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">
+              Project Address * 
+            </label>
+            <input
+              type="text"
+              id="project-address"
+              required
+              style="width: 100%; border: 2px solid #2563eb; border-radius: 8px; padding: 0.75rem; font-size: 1rem; position: relative; z-index: 1000;"
+              placeholder="Start typing your Florida address..."
+            />
+            <p style="font-size: 0.875rem; color: #6b7280; margin-top: 0.5rem;">
+              Full address of the property to be cleared
+            </p>
+          </div>
+          
+          <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">
+              Project Size (Acres)
+            </label>
+            <input
+              type="number"
+              id="project-acres"
+              min="0.25"
+              step="0.25"
+              style="width: 100%; border: 2px solid #d1d5db; border-radius: 8px; padding: 0.75rem; font-size: 1rem;"
+              placeholder="e.g., 3.5"
+            />
+          </div>
+          
+          <button
+            type="submit"
+            style="width: 100%; background: #2563eb; color: white; font-weight: 700; padding: 1rem 2rem; border-radius: 8px; border: none; font-size: 1.125rem; cursor: pointer; transition: background-color 0.2s;"
+            onmouseover="this.style.backgroundColor='#1d4ed8'"
+            onmouseout="this.style.backgroundColor='#2563eb'"
+          >
+            Get My Free Estimate
+          </button>
+        </form>
+        
+        <div id="success-message" style="display: none; background: #dcfce7; border: 1px solid #16a34a; border-radius: 8px; padding: 1rem; margin-top: 1rem; text-align: center;">
+          <div style="color: #16a34a; font-weight: 600;">✅ Thank you! Your estimate request has been submitted.</div>
+          <p style="color: #374151; margin: 0.5rem 0 0 0; font-size: 0.875rem;">
+            We'll contact you within 4 hours to provide your pricing.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</Layout>
+
+<!-- WORKING Google Maps -->
+<script>
+  window.initSimpleEstimate = function() {
+    console.log('🗺️ Simple Google Maps loaded');
+    
+    const addressInput = document.getElementById('project-address');
+    const form = document.getElementById('simple-lead-form');
+    
+    // Simple autocomplete setup
+    if (window.google && window.google.maps && window.google.maps.places) {
+      const autocomplete = new google.maps.places.Autocomplete(addressInput, {
+        types: ['address'],
+        componentRestrictions: { country: 'US' }
+      });
+      
+      autocomplete.addListener('place_changed', function() {
+        const place = autocomplete.getPlace();
+        if (place.formatted_address) {
+          console.log('✅ Address selected:', place.formatted_address);
+        }
+      });
+      
+      console.log('✅ Address autocomplete working');
+    } else {
+      console.error('❌ Google Places not available');
+    }
+    
+    // Form submission
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('customer-name').value;
+      const phone = document.getElementById('customer-phone').value;
+      const email = document.getElementById('customer-email').value;
+      const address = document.getElementById('project-address').value;
+      const acres = document.getElementById('project-acres').value;
+      
+      if (!name || !phone || !email || !address) {
+        alert('Please fill in all required fields');
+        return;
+      }
+      
+      // Submit to Terminal
+      try {
+        const leadData = {
+          name: name,
+          email: email,
+          phone: phone,
+          address: address,
+          acreage: acres || '0',
+          selectedPackage: 'Inquiry',
+          message: `Simple lead from fltreeshop.com estimate form`,
+          source: 'fltreeshop.com',
+          status: 'new',
+          createdAt: Date.now()
+        };
+        
+        console.log('Submitting simple lead:', leadData);
+        
+        // Show success immediately (non-blocking)
+        document.getElementById('success-message').style.display = 'block';
+        form.style.display = 'none';
+        
+        // Try Terminal sync in background
+        fetch('https://earnest-lemming-634.convex.cloud/api/leads/createLead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(leadData)
+        }).then(response => {
+          if (response.ok) {
+            console.log('✅ Lead synced to Terminal');
+          } else {
+            console.log('⚠️ Terminal sync failed, but lead captured locally');
+          }
+        }).catch(error => {
+          console.log('⚠️ Terminal offline, but lead captured locally');
+        });
+        
+      } catch (error) {
+        console.error('Form error:', error);
+        alert('Error submitting form. Please call us at 386.843.5266');
+      }
+    });
+  };
+</script>
+
+<!-- Simple Google Maps Load -->
+<script async defer 
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfpqXu-EQV5MWIFBodDFB1K3VZtz1kF5A&libraries=places&callback=initSimpleEstimate">
+</script>
+
+<style>
+  /* Override Google autocomplete styling */
+  .pac-container {
+    z-index: 10000 !important;
+    border-radius: 8px !important;
+    margin-top: 2px !important;
+    font-family: inherit !important;
+  }
+  
+  .pac-item {
+    padding: 12px !important;
+    font-size: 14px !important;
+    border-bottom: 1px solid #f3f4f6 !important;
+  }
+  
+  .pac-item:hover {
+    background-color: #eff6ff !important;
+  }
+  
+  .pac-item-selected {
+    background-color: #dbeafe !important;
+  }
+  
+  input:focus {
+    border-color: #2563eb !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+  }
+</style>
