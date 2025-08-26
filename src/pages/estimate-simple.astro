@@ -80,12 +80,10 @@ import Layout from '../layouts/Layout.astro';
               Project Size (Acres)
             </label>
             <input
-              type="number"
+              type="text"
               id="project-acres"
-              min="0.25"
-              step="0.25"
               style="width: 100%; border: 2px solid #d1d5db; border-radius: 8px; padding: 0.75rem; font-size: 1rem;"
-              placeholder="e.g., 3.5"
+              placeholder="Any size (e.g., 1.12, 3.5, 10)"
             />
           </div>
           
@@ -153,6 +151,10 @@ import Layout from '../layouts/Layout.astro';
         return;
       }
       
+      // Calculate estimate with $1900 minimum
+      const acreageNum = parseFloat(acres) || 0;
+      const baseEstimate = Math.max(1900, acreageNum * 2500); // $2500/acre, $1900 minimum
+      
       // Submit to Terminal
       try {
         const leadData = {
@@ -160,12 +162,13 @@ import Layout from '../layouts/Layout.astro';
           email: email,
           phone: phone,
           address: address,
-          acreage: acres || '0',
-          selectedPackage: 'Inquiry',
-          message: `Simple lead from fltreeshop.com estimate form`,
+          acreage: acres || 'Not specified',
+          selectedPackage: acreageNum > 0 ? `${acreageNum} acres - $${baseEstimate.toLocaleString()} estimate` : 'General Inquiry',
+          message: `Lead from fltreeshop.com - Project size: ${acres || 'Not specified'} acres - Estimated value: $${baseEstimate.toLocaleString()}`,
           source: 'fltreeshop.com',
           status: 'new',
-          createdAt: Date.now()
+          createdAt: Date.now(),
+          estimatedValue: baseEstimate
         };
         
         console.log('Submitting simple lead:', leadData);
@@ -174,19 +177,37 @@ import Layout from '../layouts/Layout.astro';
         document.getElementById('success-message').style.display = 'block';
         form.style.display = 'none';
         
-        // Try Terminal sync in background
-        fetch('https://earnest-lemming-634.convex.cloud/api/leads/createLead', {
+        // Try multiple Terminal endpoints
+        
+        // Method 1: Direct Terminal POST
+        fetch('http://localhost:3003/api/leads', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(leadData)
         }).then(response => {
           if (response.ok) {
-            console.log('✅ Lead synced to Terminal');
+            console.log('✅ Lead synced to Terminal (direct)');
           } else {
-            console.log('⚠️ Terminal sync failed, but lead captured locally');
+            console.log('⚠️ Direct Terminal sync failed, trying Convex...');
+            
+            // Method 2: Convex mutation format
+            return fetch('https://earnest-lemming-634.convex.cloud/api', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                path: 'leads:createLead',
+                args: leadData
+              })
+            });
+          }
+        }).then(response => {
+          if (response && response.ok) {
+            console.log('✅ Lead synced via Convex');
+          } else {
+            console.log('⚠️ All Terminal sync methods failed - lead captured locally only');
           }
         }).catch(error => {
-          console.log('⚠️ Terminal offline, but lead captured locally');
+          console.log('⚠️ Terminal connection failed:', error.message);
         });
         
       } catch (error) {
