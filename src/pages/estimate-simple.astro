@@ -117,21 +117,109 @@ import Layout from '../layouts/Layout.astro';
     const addressInput = document.getElementById('project-address');
     const form = document.getElementById('simple-lead-form');
     
-    // Simple autocomplete setup
+    // Address validation function
+    const validateAddress = async (address) => {
+      // Check for minimum required components
+      const hasStreet = /\d+\s+\w+/.test(address);
+      const hasCity = /,\s*[A-Za-z\s]+/.test(address);
+      const hasState = /,\s*[A-Z]{2}/.test(address);
+      
+      if (!hasStreet || !hasCity || !hasState) {
+        return {
+          valid: false,
+          error: 'Please enter a complete address including city and state',
+          formatted: null
+        };
+      }
+      
+      // Use Google Geocoding to validate and format
+      if (typeof google !== 'undefined' && google.maps && google.maps.Geocoder) {
+        try {
+          const geocoder = new google.maps.Geocoder();
+          const result = await new Promise((resolve, reject) => {
+            geocoder.geocode({ address }, (results, status) => {
+              if (status === 'OK') {
+                resolve(results);
+              } else {
+                reject(status);
+              }
+            });
+          });
+          
+          if (result && result[0]) {
+            // Check if it's in service area (Florida)
+            const isInFlorida = result[0].address_components.some(
+              component => component.types.includes('administrative_area_level_1') 
+                && component.short_name === 'FL'
+            );
+            
+            if (!isInFlorida) {
+              return {
+                valid: false,
+                error: 'Service area limited to Florida',
+                formatted: null
+              };
+            }
+            
+            return {
+              valid: true,
+              error: null,
+              formatted: result[0].formatted_address,
+              coordinates: {
+                lat: result[0].geometry.location.lat(),
+                lng: result[0].geometry.location.lng()
+              }
+            };
+          }
+        } catch (error) {
+          console.error('Geocoding failed:', error);
+        }
+      }
+      
+      return {
+        valid: false,
+        error: 'Unable to validate address. Please check and try again.',
+        formatted: null
+      };
+    };
+    
+    // Enhanced autocomplete setup
     if (window.google && window.google.maps && window.google.maps.places) {
       const autocomplete = new google.maps.places.Autocomplete(addressInput, {
         types: ['address'],
-        componentRestrictions: { country: 'US' }
+        componentRestrictions: { country: 'US' },
+        fields: ['formatted_address', 'geometry', 'address_components']
       });
       
-      autocomplete.addListener('place_changed', function() {
+      // Set bounds to Florida
+      const floridaBounds = new google.maps.LatLngBounds(
+        new google.maps.LatLng(24.396308, -87.634896), // SW Florida
+        new google.maps.LatLng(31.000968, -79.974306)  // NE Florida
+      );
+      autocomplete.setBounds(floridaBounds);
+      
+      autocomplete.addListener('place_changed', async function() {
         const place = autocomplete.getPlace();
-        if (place.formatted_address) {
-          console.log('✅ Address selected:', place.formatted_address);
+        
+        if (!place.geometry) {
+          addressInput.setCustomValidity('Please select a valid address from the dropdown');
+          return;
+        }
+        
+        // Validate the selected address
+        const validation = await validateAddress(place.formatted_address);
+        
+        if (!validation.valid) {
+          addressInput.setCustomValidity(validation.error);
+          console.error('Address validation failed:', validation.error);
+        } else {
+          addressInput.setCustomValidity(''); // Clear validation
+          addressInput.value = validation.formatted; // Use properly formatted address
+          console.log('✅ Valid Florida address:', validation.formatted);
         }
       });
       
-      console.log('✅ Address autocomplete working');
+      console.log('✅ Address autocomplete with validation ready');
     } else {
       console.error('❌ Google Places not available');
     }
@@ -150,6 +238,15 @@ import Layout from '../layouts/Layout.astro';
         alert('Please fill in all required fields');
         return;
       }
+      
+      // Validate address before submission
+      const validation = await validateAddress(address);
+      if (!validation.valid) {
+        alert(`Address Error: ${validation.error}`);
+        return;
+      }
+      
+      console.log('✅ Address validation passed:', validation.formatted);
       
       // Calculate estimate with $1900 minimum
       const acreageNum = parseFloat(acres) || 0;
@@ -177,37 +274,33 @@ import Layout from '../layouts/Layout.astro';
         document.getElementById('success-message').style.display = 'block';
         form.style.display = 'none';
         
-        // Try multiple Terminal endpoints
-        
-        // Method 1: Direct Terminal POST
-        fetch('http://localhost:3003/api/leads', {
+        // Terminal sync using exact specification
+        fetch('https://earnest-lemming-634.convex.cloud/api/mutation', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(leadData)
-        }).then(response => {
-          if (response.ok) {
-            console.log('✅ Lead synced to Terminal (direct)');
+          body: JSON.stringify({
+            path: 'leads:createLead',
+            args: {
+              name: leadData.name,
+              email: leadData.email,
+              phone: leadData.phone,
+              source: 'fltreeshop.com',
+              status: 'debug-test',
+              createdAt: Date.now()
+            }
+          })
+        }).then(r => {
+          console.log('Terminal response status:', r.status);
+          return r.text();
+        }).then(text => {
+          console.log('Terminal response:', text);
+          if (text && !text.includes('error')) {
+            console.log('✅ Lead successfully synced to Terminal');
           } else {
-            console.log('⚠️ Direct Terminal sync failed, trying Convex...');
-            
-            // Method 2: Convex mutation format
-            return fetch('https://earnest-lemming-634.convex.cloud/api', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                path: 'leads:createLead',
-                args: leadData
-              })
-            });
-          }
-        }).then(response => {
-          if (response && response.ok) {
-            console.log('✅ Lead synced via Convex');
-          } else {
-            console.log('⚠️ All Terminal sync methods failed - lead captured locally only');
+            console.log('⚠️ Terminal sync issue:', text);
           }
         }).catch(error => {
-          console.log('⚠️ Terminal connection failed:', error.message);
+          console.log('⚠️ Terminal connection error:', error);
         });
         
       } catch (error) {
