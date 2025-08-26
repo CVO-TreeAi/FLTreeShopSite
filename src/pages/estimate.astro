@@ -628,13 +628,13 @@ import Layout from '../layouts/Layout.astro';
         console.log('Submitting lead to Terminal:', leadData);
         
         // Send to Terminal's Convex backend
-        const response = await fetch('https://earnest-lemming-634.convex.cloud/api/mutation', {
+        const response = await fetch('https://earnest-lemming-634.convex.cloud/api/leads/createLead', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            path: 'leads:createLead',
-            args: leadData
-          })
+          headers: { 
+            'Content-Type': 'application/json',
+            'X-Source': 'fltreeshop.com'
+          },
+          body: JSON.stringify(leadData)
         });
         
         if (!response.ok) {
@@ -845,13 +845,73 @@ import Layout from '../layouts/Layout.astro';
       }
     };
     
+    // Progressive tracking setup
+    const getOrCreateSession = () => {
+      let sessionId = sessionStorage.getItem('lead_session');
+      if (!sessionId) {
+        sessionId = `fltreeshop_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        sessionStorage.setItem('lead_session', sessionId);
+      }
+      return sessionId;
+    };
+
+    const trackFieldUpdate = async (fieldName, value) => {
+      const sessionId = getOrCreateSession();
+      
+      try {
+        const response = await fetch('https://earnest-lemming-634.convex.cloud/api/leads/upsertPartialLead', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'X-Source': 'fltreeshop.com'
+          },
+          body: JSON.stringify({
+            sessionId,
+            source: 'fltreeshop.com',
+            fields: {
+              [fieldName]: value
+            },
+            lastUpdated: Date.now(),
+            status: 'partial'
+          })
+        });
+        
+        if (response.ok) {
+          console.log(`✅ Tracked: ${fieldName} = ${value}`);
+        }
+      } catch (error) {
+        console.error('Tracking error:', error);
+      }
+    };
+    
     // Initialize
     renderCurrentStep();
     
-    // Set up Google Places when step 1 is rendered
+    // Set up Google Places and field tracking when step 1 is rendered
     setTimeout(() => {
       if (currentStep === 'contact') {
         initGooglePlaces();
+        
+        // Add progressive tracking to all form inputs
+        const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]');
+        inputs.forEach(input => {
+          let debounce;
+          input.addEventListener('input', (e) => {
+            clearTimeout(debounce);
+            debounce = setTimeout(() => {
+              if (e.target.value.length > 2) {
+                trackFieldUpdate(e.target.id || e.target.name, e.target.value);
+              }
+            }, 1000);
+          });
+          
+          input.addEventListener('blur', (e) => {
+            clearTimeout(debounce);
+            if (e.target.value.length > 0) {
+              trackFieldUpdate(e.target.id || e.target.name, e.target.value);
+            }
+          });
+        });
       }
     }, 100);
   };
